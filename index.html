@@ -1,307 +1,502 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <title>Supermercado Delivery</title>
-  <!-- Font Awesome para ícones -->
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      max-width: 900px;
-      margin: auto;
-      background-color: #f9f9f9;
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Supermercado Delivery</title>
+
+<!-- FontAwesome para ícones -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0; padding: 0 15px 30px;
+    background: #f5f5f5;
+  }
+  header {
+    background: #28a745;
+    color: white;
+    padding: 18px 0;
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: bold;
+  }
+
+  /* Categorias como botões na barra superior */
+  #categorias {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: 15px 0;
+  }
+  #categorias button {
+    background: #ddd;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 18px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s;
+  }
+  #categorias button.ativo {
+    background: #28a745;
+    color: white;
+  }
+  #categorias button:hover:not(.ativo) {
+    background: #c7e6c1;
+  }
+
+  /* Busca */
+  #search {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+  }
+
+  /* Produtos em grade com cards bonitos */
+  #product-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+  }
+  .product {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 3px 8px rgb(0 0 0 / 0.1);
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.2s ease;
+  }
+  .product:hover {
+    transform: translateY(-5px);
+  }
+  .product img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+  .product strong {
+    font-size: 1.15rem;
+    margin-bottom: 6px;
+    display: block;
+    color: #333;
+  }
+  .product .price {
+    color: #28a745;
+    font-weight: bold;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+  }
+  .product input[type="number"] {
+    width: 60px;
+    padding: 6px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    text-align: center;
+  }
+  .product button {
+    width: 100%;
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 0;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.3s;
+  }
+  .product button:hover {
+    background: #1e7a31;
+  }
+
+  /* Carrinho */
+  #carrinho {
+    margin-top: 30px;
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 3px 8px rgb(0 0 0 / 0.1);
+  }
+  #carrinho h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    text-align: center;
+    color: #28a745;
+  }
+  #itens-carrinho {
+    list-style: none;
+    padding-left: 0;
+    margin: 0 0 15px 0;
+  }
+  #itens-carrinho li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 6px;
+  }
+  #itens-carrinho li span {
+    flex: 1;
+  }
+  #itens-carrinho li .controles {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  #itens-carrinho li button {
+    background: #e74c3c;
+    border: none;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    padding: 3px 7px;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+  }
+  #itens-carrinho li button:hover {
+    background: #c0392b;
+  }
+  #itens-carrinho li .qty-btn {
+    background: #28a745;
+    padding: 3px 8px;
+    font-weight: bold;
+    user-select: none;
+  }
+  #itens-carrinho li .qty-btn:hover {
+    background: #1e7a31;
+  }
+  #remover-tudo-btn {
+    background: #e74c3c;
+    border: none;
+    color: white;
+    padding: 10px;
+    width: 100%;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 15px;
+    transition: background-color 0.3s;
+  }
+  #remover-tudo-btn:hover {
+    background: #c0392b;
+  }
+  #total {
+    font-weight: 700;
+    font-size: 1.2rem;
+    text-align: right;
+    margin-bottom: 20px;
+    color: #28a745;
+  }
+
+  /* Checkout */
+  #checkout {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 3px 8px rgb(0 0 0 / 0.1);
+    max-width: 480px;
+    margin: 0 auto 40px auto;
+  }
+  #checkout h2 {
+    text-align: center;
+    color: #28a745;
+    margin-top: 0;
+    margin-bottom: 15px;
+  }
+  #checkout label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  #checkout input, #checkout select, #checkout textarea {
+    width: 100%;
+    padding: 8px 10px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+  #troco-container {
+    display: none;
+  }
+  #checkout button {
+    background: #28a745;
+    border: none;
+    color: white;
+    padding: 12px 0;
+    width: 100%;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  #checkout button:hover {
+    background: #1e7a31;
+  }
+
+  /* Responsive */
+  @media (max-width: 520px) {
+    #product-list {
+      grid-template-columns: 1fr;
     }
-    .categoria-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    .categoria-bar button {
-      padding: 10px 15px;
-      border: none;
-      background-color: #ddd;
-      cursor: pointer;
-      border-radius: 5px;
-    }
-    .categoria-bar button.ativa {
-      background-color: #28a745;
-      color: white;
-      font-weight: bold;
-    }
-    .search-bar {
-      margin-bottom: 20px;
-      width: 100%;
-      padding: 10px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    .product {
-      border: 1px solid #ccc;
-      background-color: white;
-      padding: 10px;
-      display: flex;
-      gap: 10px;
-      margin-bottom: 10px;
-      align-items: center;
-      border-radius: 5px;
-    }
-    .product img {
-      width: 80px;
-      height: 80px;
-      object-fit: cover;
-      border-radius: 5px;
-    }
-    .product-info {
-      flex: 1;
-    }
-    input, select {
-      padding: 10px;
-      margin-top: 10px;
-      width: 100%;
-      box-sizing: border-box;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    button {
-      padding: 10px;
-      background-color: #28a745;
-      color: white;
-      font-weight: bold;
-      border: none;
-      cursor: pointer;
-      border-radius: 5px;
-    }
-    button:hover {
-      background-color: #218838;
-    }
-    .remover-btn {
-      background-color: #dc3545;
-      margin-left: 10px;
-      font-size: 12px;
-    }
-    .remover-btn:hover {
-      background-color: #c82333;
-    }
-    .clear-cart {
-      background-color: #6c757d;
-      margin-top: 10px;
-    }
-    .clear-cart:hover {
-      background-color: #5a6268;
-    }
-    .quantidade-btn {
-      background-color: #007bff;
-      color: white;
-      padding: 6px 10px;
-      margin: 0 5px;
-      font-size: 14px;
-      border: none;
-      border-radius: 4px;
-    }
-    .quantidade-btn:hover {
-      background-color: #0056b3;
-    }
-    .cart, .checkout {
-      margin-top: 30px;
-    }
-    #troco-container {
-      display: none;
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
 
-  <h1>Supermercado Delivery</h1>
+<header>Supermercado Delivery</header>
 
-  <input type="text" id="search" class="search-bar" placeholder="🔍 Buscar produto..." onkeyup="renderizarProdutos()" />
+<!-- Categorias -->
+<div id="categorias"></div>
 
-  <div class="categoria-bar" id="categoria-bar"></div>
+<!-- Busca -->
+<input type="text" id="search" placeholder="Buscar produto..." oninput="renderizarProdutos()" />
 
-  <div id="product-list"></div>
+<!-- Lista de Produtos -->
+<div id="product-list"></div>
 
-  <div class="cart">
-    <h2>🛒 Carrinho</h2>
-    <ul id="cart-items"></ul>
-    <p><strong>Total: R$ <span id="total">0.00</span></strong></p>
-    <button class="clear-cart" onclick="limparCarrinho()"><i class="fas fa-trash"></i> Remover tudo</button>
+<!-- Carrinho -->
+<section id="carrinho">
+  <h2>Carrinho</h2>
+  <ul id="itens-carrinho"></ul>
+  <button id="remover-tudo-btn" onclick="removerTudo()">Remover Tudo</button>
+  <div id="total">Total: R$ 0,00</div>
+</section>
+
+<!-- Checkout -->
+<section id="checkout">
+  <h2>Finalizar Pedido</h2>
+  <label for="nome">Nome:</label>
+  <input type="text" id="nome" placeholder="Seu nome" required />
+
+  <label for="endereco">Endereço de entrega:</label>
+  <textarea id="endereco" rows="3" placeholder="Rua, número, bairro..." required></textarea>
+
+  <label for="pagamento">Forma de pagamento:</label>
+  <select id="pagamento" onchange="mostrarTroco()">
+    <option value="">Selecione</option>
+    <option value="pix">PIX</option>
+    <option value="cartao">Cartão</option>
+    <option value="dinheiro">Dinheiro</option>
+  </select>
+
+  <div id="troco-container">
+    <label for="troco">Precisa de troco para quanto?</label>
+    <input type="number" id="troco" min="0" step="0.01" placeholder="Valor do troco" />
   </div>
 
-  <div class="checkout">
-    <h3>📍 Endereço de entrega</h3>
-    <input type="text" id="endereco" placeholder="Digite seu endereço completo" />
+  <button onclick="finalizarPedido()">Finalizar Pedido</button>
+</section>
 
-    <h3>💳 Forma de pagamento</h3>
-    <select id="forma-pagamento" onchange="verificarPagamento()">
-      <option value="Pix">Pix</option>
-      <option value="Cartão">Cartão</option>
-      <option value="Dinheiro">Dinheiro</option>
-    </select>
+<script>
+  // Produtos com categorias e imagens
+  const produtos = [
+    { nome: "Arroz", preco: 20.00, categoria: "Alimentos", imagem: "https://via.placeholder.com/240x140?text=Arroz" },
+    { nome: "Feijão", preco: 8.00, categoria: "Alimentos", imagem: "https://via.placeholder.com/240x140?text=Feijão" },
+    { nome: "Refrigerante", preco: 6.50, categoria: "Bebidas", imagem: "https://via.placeholder.com/240x140?text=Refrigerante" },
+    { nome: "Sabonete", preco: 2.00, categoria: "Higiene", imagem: "https://via.placeholder.com/240x140?text=Sabonete" },
+    { nome: "Detergente", preco: 3.00, categoria: "Limpeza", imagem: "https://via.placeholder.com/240x140?text=Detergente" },
+  ];
 
-    <div id="troco-container">
-      <h4>💵 Troco para quanto?</h4>
-      <input type="text" id="troco" placeholder="Ex: 100.00" />
-    </div>
+  const categorias = ["Todas", ...new Set(produtos.map(p => p.categoria))];
+  let categoriaSelecionada = "Todas";
 
-    <br />
-    <button onclick="finalizarPedido()"><i class="fab fa-whatsapp"></i> Finalizar Pedido no WhatsApp</button>
-  </div>
+  let carrinho = [];
 
-  <script>
-    const produtos = [
-      { nome: "Arroz 5kg", preco: 25, categoria: "Alimentos", imagem: "https://i.imgur.com/VXU0NoD.jpg" },
-      { nome: "Feijão 1kg", preco: 7, categoria: "Alimentos", imagem: "https://i.imgur.com/ANlt36T.jpg" },
-      { nome: "Macarrão", preco: 5, categoria: "Alimentos", imagem: "https://i.imgur.com/pVo3mPw.jpg" },
-      { nome: "Óleo", preco: 6, categoria: "Alimentos", imagem: "https://i.imgur.com/tQdI5Iw.jpg" },
-      { nome: "Detergente", preco: 3, categoria: "Limpeza", imagem: "https://i.imgur.com/MJJk0e4.jpg" },
-      { nome: "Sabão em pó", preco: 10, categoria: "Limpeza", imagem: "https://i.imgur.com/tk7RtUw.jpg" }
-    ];
+  // Renderizar categorias (barra superior)
+  function renderizarCategorias() {
+    const catDiv = document.getElementById("categorias");
+    catDiv.innerHTML = "";
+    categorias.forEach(cat => {
+      const btn = document.createElement("button");
+      btn.textContent = cat;
+      if (cat === categoriaSelecionada) btn.classList.add("ativo");
+      btn.onclick = () => {
+        categoriaSelecionada = cat;
+        renderizarCategorias();
+        renderizarProdutos();
+      };
+      catDiv.appendChild(btn);
+    });
+  }
 
-    const carrinho = [];
-    let categoriaSelecionada = "Todas";
+  // Renderizar produtos em grade com cards bonitos
+  function renderizarProdutos() {
+    const lista = document.getElementById("product-list");
+    const busca = document.getElementById("search").value.toLowerCase();
+    lista.innerHTML = "";
 
-    function gerarCategorias() {
-      const categorias = ["Todas", ...new Set(produtos.map(p => p.categoria))];
-      const barra = document.getElementById("categoria-bar");
-      barra.innerHTML = "";
-      categorias.forEach(cat => {
-        const btn = document.createElement("button");
-        btn.textContent = cat;
-        if (cat === categoriaSelecionada) btn.classList.add("ativa");
-        btn.onclick = () => {
-          categoriaSelecionada = cat;
-          renderizarProdutos();
-          gerarCategorias();
-        };
-        barra.appendChild(btn);
-      });
+    const filtrados = produtos.filter(p => {
+      const correspondeCategoria = categoriaSelecionada === "Todas" || p.categoria === categoriaSelecionada;
+      const correspondeBusca = p.nome.toLowerCase().includes(busca);
+      return correspondeCategoria && correspondeBusca;
+    });
+
+    filtrados.forEach(produto => {
+      const div = document.createElement("div");
+      div.className = "product";
+      div.innerHTML = `
+        <img src="${produto.imagem}" alt="${produto.nome}" />
+        <strong>${produto.nome}</strong>
+        <div class="price">R$ ${produto.preco.toFixed(2)}</div>
+        <input type="number" id="qtd-${produto.nome}" value="1" min="1" />
+        <button onclick="adicionarAoCarrinho('${produto.nome}')">
+          <i class="fas fa-cart-plus"></i> Adicionar
+        </button>
+      `;
+      lista.appendChild(div);
+    });
+  }
+
+  // Adicionar item ao carrinho (mantendo quantidade)
+  function adicionarAoCarrinho(nome) {
+    const inputQtd = document.getElementById(`qtd-${nome}`);
+    let quantidade = parseInt(inputQtd.value);
+    if (isNaN(quantidade) || quantidade < 1) quantidade = 1;
+
+    const produto = produtos.find(p => p.nome === nome);
+    if (!produto) return;
+
+    const itemNoCarrinho = carrinho.find(i => i.nome === nome);
+    if (itemNoCarrinho) {
+      itemNoCarrinho.quantidade += quantidade;
+    } else {
+      carrinho.push({ nome, preco: produto.preco, quantidade });
     }
+    renderizarCarrinho();
+  }
 
-    function renderizarProdutos() {
-      const lista = document.getElementById("product-list");
-      const busca = document.getElementById("search").value.toLowerCase();
-      lista.innerHTML = "";
+  // Renderizar carrinho com controles de quantidade e remover
+  function renderizarCarrinho() {
+    const ul = document.getElementById("itens-carrinho");
+    ul.innerHTML = "";
 
-      const filtrados = produtos.filter(p => {
-        const correspondeCategoria = categoriaSelecionada === "Todas" || p.categoria === categoriaSelecionada;
-        const correspondeBusca = p.nome.toLowerCase().includes(busca);
-        return correspondeCategoria && correspondeBusca;
-      });
+    carrinho.forEach((item, index) => {
+      const li = document.createElement("li");
 
-      filtrados.forEach(produto => {
-        const div = document.createElement("div");
-        div.className = "product";
-        div.innerHTML = `
-          <img src="${produto.imagem}" alt="${produto.nome}" />
-          <div class="product-info">
-            <strong>${produto.nome}</strong><br/>
-            Preço: R$ ${produto.preco.toFixed(2)}<br/>
-            <input type="number" id="qtd-${produto.nome}" value="1" min="1" />
-            <button onclick="adicionarAoCarrinho('${produto.nome}')">
-              <i class="fas fa-cart-plus"></i> Adicionar
-            </button>
-          </div>
-        `;
-        lista.appendChild(div);
-      });
-    }
+      li.innerHTML = `
+        <span>${item.nome} (R$ ${item.preco.toFixed(2)})</span>
+        <div class="controles">
+          <button class="qty-btn" onclick="alterarQuantidade(${index}, -1)"><i class="fas fa-minus"></i></button>
+          <span>${item.quantidade}</span>
+          <button class="qty-btn" onclick="alterarQuantidade(${index}, 1)"><i class="fas fa-plus"></i></button>
+          <button onclick="removerItem(${index})" title="Remover"><i class="fas fa-trash"></i></button>
+        </div>
+      `;
+      ul.appendChild(li);
+    });
 
-    function adicionarAoCarrinho(nome) {
-      const produto = produtos.find(p => p.nome === nome);
-      const qtd = parseInt(document.getElementById(`qtd-${nome}`).value);
-      if (qtd < 1) return;
+    atualizarTotal();
+  }
 
-      const existente = carrinho.find(item => item.nome === nome);
-      if (existente) {
-        existente.quantidade += qtd;
-      } else {
-        carrinho.push({ ...produto, quantidade: qtd });
-      }
-      atualizarCarrinho();
-    }
-
-    function atualizarCarrinho() {
-      const listaCarrinho = document.getElementById("cart-items");
-      listaCarrinho.innerHTML = "";
-      let total = 0;
-
-      carrinho.forEach((item, index) => {
-        const li = document.createElement("li");
-        li.innerHTML = `
-          ${item.nome} - R$ ${(item.preco * item.quantidade).toFixed(2)}
-          <div>
-            <button class="quantidade-btn" onclick="alterarQuantidade(${index}, -1)">
-              <i class="fas fa-minus"></i>
-            </button>
-            ${item.quantidade}
-            <button class="quantidade-btn" onclick="alterarQuantidade(${index}, 1)">
-              <i class="fas fa-plus"></i>
-            </button>
-            <button class="remover-btn" onclick="removerDoCarrinho(${index})">
-              <i class="fas fa-trash"></i>
-            </button>
-          </div>
-        `;
-        listaCarrinho.appendChild(li);
-        total += item.preco * item.quantidade;
-      });
-
-      document.getElementById("total").textContent = total.toFixed(2);
-    }
-
-    function alterarQuantidade(index, delta) {
-      if (carrinho[index].quantidade + delta >= 1) {
-        carrinho[index].quantidade += delta;
-        atualizarCarrinho();
-      }
-    }
-
-    function removerDoCarrinho(index) {
+  // Alterar quantidade no carrinho
+  function alterarQuantidade(index, delta) {
+    carrinho[index].quantidade += delta;
+    if (carrinho[index].quantidade < 1) {
       carrinho.splice(index, 1);
-      atualizarCarrinho();
+    }
+    renderizarCarrinho();
+  }
+
+  // Remover item do carrinho
+  function removerItem(index) {
+    carrinho.splice(index, 1);
+    renderizarCarrinho();
+  }
+
+  // Remover tudo do carrinho
+  function removerTudo() {
+    if (confirm("Tem certeza que deseja limpar o carrinho?")) {
+      carrinho = [];
+      renderizarCarrinho();
+    }
+  }
+
+  // Atualizar total do carrinho
+  function atualizarTotal() {
+    const totalDiv = document.getElementById("total");
+    const total = carrinho.reduce((acc, item) => acc + item.preco * item.quantidade, 0);
+    totalDiv.textContent = `Total: R$ ${total.toFixed(2)}`;
+  }
+
+  // Mostrar campo troco se dinheiro selecionado
+  function mostrarTroco() {
+    const pagamento = document.getElementById("pagamento").value;
+    const trocoDiv = document.getElementById("troco-container");
+    if (pagamento === "dinheiro") {
+      trocoDiv.style.display = "block";
+    } else {
+      trocoDiv.style.display = "none";
+      document.getElementById("troco").value = "";
+    }
+  }
+
+  // Finalizar pedido e enviar para WhatsApp
+  function finalizarPedido() {
+    const nome = document.getElementById("nome").value.trim();
+    const endereco = document.getElementById("endereco").value.trim();
+    const pagamento = document.getElementById("pagamento").value;
+    const troco = document.getElementById("troco").value.trim();
+
+    if (!nome || !endereco || !pagamento) {
+      alert("Por favor, preencha nome, endereço e forma de pagamento.");
+      return;
+    }
+    if (carrinho.length === 0) {
+      alert("O carrinho está vazio.");
+      return;
     }
 
-    function limparCarrinho() {
-      carrinho.length = 0;
-      atualizarCarrinho();
+    let msg = `*Pedido de Supermercado*\n`;
+    msg += `Nome: ${nome}\n`;
+    msg += `Endereço: ${endereco}\n`;
+    msg += `Forma de pagamento: ${pagamento.charAt(0).toUpperCase() + pagamento.slice(1)}\n`;
+    if (pagamento === "dinheiro" && troco) {
+      msg += `Troco para: R$ ${parseFloat(troco).toFixed(2)}\n`;
     }
+    msg += `\n*Itens:*\n`;
+    carrinho.forEach(item => {
+      msg += `- ${item.nome} x${item.quantidade} = R$ ${(item.preco * item.quantidade).toFixed(2)}\n`;
+    });
+    const total = carrinho.reduce((acc, item) => acc + item.preco * item.quantidade, 0);
+    msg += `\n*Total: R$ ${total.toFixed(2)}*`;
 
-    function verificarPagamento() {
-      const forma = document.getElementById("forma-pagamento").value;
-      document.getElementById("troco-container").style.display = forma === "Dinheiro" ? "block" : "none";
-    }
+    // URL encode para WhatsApp
+    const urlMsg = encodeURIComponent(msg);
+    // Troque pelo seu número do WhatsApp no formato internacional sem "+" e espaços, ex: 5511999999999
+    const numeroWhatsApp = "5584996220061";
 
-    function finalizarPedido() {
-      const endereco = document.getElementById("endereco").value.trim();
-      const formaPagamento = document.getElementById("forma-pagamento").value;
-      const troco = document.getElementById("troco").value.trim();
+    const url = `https://wa.me/${numeroWhatsApp}?text=${urlMsg}`;
+    window.open(url, "_blank");
+  }
 
-      if (!endereco) return alert("Por favor, informe o endereço.");
-      if (carrinho.length === 0) return alert("O carrinho está vazio.");
+  // Inicialização
+  renderizarCategorias();
+  renderizarProdutos();
+  renderizarCarrinho();
+</script>
 
-      let mensagem = "*Novo pedido:*\n\n";
-      carrinho.forEach(item => {
-        mensagem += `${item.quantidade}x ${item.nome} - R$ ${(item.preco * item.quantidade).toFixed(2)}\n`;
-      });
-
-      const total = carrinho.reduce((soma, item) => soma + item.preco * item.quantidade, 0);
-      mensagem += `\n*Total:* R$ ${total.toFixed(2)}\n`;
-      mensagem += `*Endereço:* ${endereco}\n`;
-      mensagem += `*Pagamento:* ${formaPagamento}\n`;
-
-      if (formaPagamento === "Dinheiro" && troco) {
-        mensagem += `*Troco para:* R$ ${troco}`;
-      }
-
-      const numero = "SEU_NUMERO_AQUI";
-      const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
-      window.open(url, "_blank");
-    }
-
-    gerarCategorias();
-    renderizarProdutos();
-  </script>
 </body>
 </html>
