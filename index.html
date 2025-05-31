@@ -50,6 +50,7 @@
       { nome: "Óleo de soja", preco: 6 },
       { nome: "Açúcar 1kg", preco: 4 },
       { nome: "Detergente", preco: 3 }
+      { nome: "Detergente", preco: 3 }
     ];
 
     const carrinho = [];
@@ -112,7 +113,7 @@
       mensagem += `\n💰 Pagamento: na entrega (Dinheiro/Pix)`;
 
       const telefone = "SEU_NUMERO_AQUI"; // Ex: 5581999999999
-      const url = https://api.whatsapp.com/send?phone=5584996220061&text={telefone}?text=${encodeURIComponent(mensagem)}`;
+      const url = `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`;
       window.open(url, "_blank");
     }
   </script>
