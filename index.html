@@ -1,27 +1,44 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Supermercado Delivery</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
-      max-width: 700px;
+      max-width: 900px;
       margin: auto;
+    }
+    .search-bar {
+      margin-bottom: 20px;
     }
     .product {
       border: 1px solid #ccc;
-      padding: 15px;
+      padding: 10px;
+      display: flex;
+      gap: 10px;
       margin-bottom: 10px;
+      align-items: center;
     }
-    .cart, .checkout {
+    .product img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+    }
+    .product-info {
+      flex: 1;
+    }
+    .category-title {
       margin-top: 30px;
+      font-size: 20px;
+      border-bottom: 2px solid #ccc;
+      padding-bottom: 5px;
     }
     input, select, button {
       padding: 10px;
-      width: 100%;
       margin-top: 10px;
+      width: 100%;
       box-sizing: border-box;
     }
     button {
@@ -34,18 +51,11 @@
     button:hover {
       background-color: darkgreen;
     }
-    #troco-container {
-      display: none;
-    }
     .remover-btn {
       background-color: red;
-      color: white;
-      padding: 5px 10px;
       margin-left: 10px;
+      padding: 4px 8px;
       font-size: 12px;
-    }
-    .remover-btn:hover {
-      background-color: darkred;
     }
     .clear-cart {
       background-color: #555;
@@ -58,16 +68,20 @@
       margin: 0 5px;
       font-size: 14px;
       border: none;
-      cursor: pointer;
     }
-    .quantidade-btn:hover {
-      background-color: #111;
+    .cart, .checkout {
+      margin-top: 30px;
+    }
+    #troco-container {
+      display: none;
     }
   </style>
 </head>
 <body>
 
   <h1>Supermercado Delivery</h1>
+
+  <input type="text" id="search" class="search-bar" placeholder="Buscar produto..." onkeyup="renderizarProdutos()" />
 
   <div id="product-list"></div>
 
@@ -94,44 +108,65 @@
       <input type="text" id="troco" placeholder="Ex: 100.00" />
     </div>
 
-    <br>
+    <br />
     <button onclick="finalizarPedido()">Finalizar Pedido no WhatsApp</button>
   </div>
 
   <script>
     const produtos = [
-      { nome: "Arroz 5kg", preco: 25 },
-      { nome: "Feijão 1kg", preco: 7 },
-      { nome: "Óleo", preco: 6 },
-      { nome: "Macarrão", preco: 5 },
-      { nome: "Detergente", preco: 3 }
+      { nome: "Arroz 5kg", preco: 25, categoria: "Alimentos", imagem: "https://via.placeholder.com/80?text=Arroz" },
+      { nome: "Feijão 1kg", preco: 7, categoria: "Alimentos", imagem: "https://via.placeholder.com/80?text=Feijao" },
+      { nome: "Macarrão", preco: 5, categoria: "Alimentos", imagem: "https://via.placeholder.com/80?text=Macarrao" },
+      { nome: "Óleo", preco: 6, categoria: "Alimentos", imagem: "https://via.placeholder.com/80?text=Oleo" },
+      { nome: "Detergente", preco: 3, categoria: "Limpeza", imagem: "https://via.placeholder.com/80?text=Detergente" },
+      { nome: "Sabão em pó", preco: 10, categoria: "Limpeza", imagem: "https://via.placeholder.com/80?text=Sabao" }
     ];
 
     const carrinho = [];
 
-    const listaProdutos = document.getElementById("product-list");
-    const listaCarrinho = document.getElementById("cart-items");
-    const totalSpan = document.getElementById("total");
+    function renderizarProdutos() {
+      const lista = document.getElementById("product-list");
+      const busca = document.getElementById("search").value.toLowerCase();
+      lista.innerHTML = "";
 
-    produtos.forEach((produto, index) => {
-      const div = document.createElement("div");
-      div.className = "product";
-      div.innerHTML = `
-        <h3>${produto.nome}</h3>
-        <p>Preço: R$ ${produto.preco.toFixed(2)}</p>
-        <input type="number" id="qtd-${index}" value="1" min="1" />
-        <button onclick="adicionarAoCarrinho(${index})">Adicionar ao carrinho</button>
-      `;
-      listaProdutos.appendChild(div);
-    });
+      const categorias = [...new Set(produtos.map(p => p.categoria))];
 
-    function adicionarAoCarrinho(index) {
-      const qtd = parseInt(document.getElementById(`qtd-${index}`).value);
+      categorias.forEach(cat => {
+        const categoriaDiv = document.createElement("div");
+        const produtosCategoria = produtos.filter(p => p.categoria === cat && p.nome.toLowerCase().includes(busca));
+
+        if (produtosCategoria.length > 0) {
+          const titulo = document.createElement("h2");
+          titulo.className = "category-title";
+          titulo.textContent = cat;
+          categoriaDiv.appendChild(titulo);
+
+          produtosCategoria.forEach((produto, index) => {
+            const div = document.createElement("div");
+            div.className = "product";
+            div.innerHTML = `
+              <img src="${produto.imagem}" alt="${produto.nome}" />
+              <div class="product-info">
+                <strong>${produto.nome}</strong><br/>
+                Preço: R$ ${produto.preco.toFixed(2)}<br/>
+                <input type="number" id="qtd-${produto.nome}" value="1" min="1" />
+                <button onclick="adicionarAoCarrinho('${produto.nome}')">Adicionar ao carrinho</button>
+              </div>
+            `;
+            categoriaDiv.appendChild(div);
+          });
+
+          lista.appendChild(categoriaDiv);
+        }
+      });
+    }
+
+    function adicionarAoCarrinho(nome) {
+      const produto = produtos.find(p => p.nome === nome);
+      const qtd = parseInt(document.getElementById(`qtd-${nome}`).value);
       if (qtd < 1) return;
-      const produto = produtos[index];
 
-      // Verifica se já existe no carrinho
-      const existente = carrinho.find(item => item.nome === produto.nome);
+      const existente = carrinho.find(item => item.nome === nome);
       if (existente) {
         existente.quantidade += qtd;
       } else {
@@ -141,18 +176,17 @@
     }
 
     function atualizarCarrinho() {
+      const listaCarrinho = document.getElementById("cart-items");
       listaCarrinho.innerHTML = "";
       let total = 0;
 
       carrinho.forEach((item, index) => {
         const li = document.createElement("li");
         li.innerHTML = `
-          <span>
-            ${item.nome} - R$ ${(item.preco * item.quantidade).toFixed(2)}
-          </span>
-          <div style="margin: 5px 0;">
+          ${item.nome} - R$ ${(item.preco * item.quantidade).toFixed(2)}
+          <div>
             <button class="quantidade-btn" onclick="alterarQuantidade(${index}, -1)">-</button>
-            <strong>${item.quantidade}</strong>
+            ${item.quantidade}
             <button class="quantidade-btn" onclick="alterarQuantidade(${index}, 1)">+</button>
             <button class="remover-btn" onclick="removerDoCarrinho(${index})">Remover</button>
           </div>
@@ -161,14 +195,14 @@
         total += item.preco * item.quantidade;
       });
 
-      totalSpan.textContent = total.toFixed(2);
+      document.getElementById("total").textContent = total.toFixed(2);
     }
 
     function alterarQuantidade(index, delta) {
       if (carrinho[index].quantidade + delta >= 1) {
         carrinho[index].quantidade += delta;
+        atualizarCarrinho();
       }
-      atualizarCarrinho();
     }
 
     function removerDoCarrinho(index) {
@@ -183,13 +217,7 @@
 
     function verificarPagamento() {
       const forma = document.getElementById("forma-pagamento").value;
-      const trocoDiv = document.getElementById("troco-container");
-
-      if (forma === "Dinheiro") {
-        trocoDiv.style.display = "block";
-      } else {
-        trocoDiv.style.display = "none";
-      }
+      document.getElementById("troco-container").style.display = forma === "Dinheiro" ? "block" : "none";
     }
 
     function finalizarPedido() {
@@ -197,37 +225,29 @@
       const formaPagamento = document.getElementById("forma-pagamento").value;
       const troco = document.getElementById("troco").value.trim();
 
-      if (!endereco) {
-        alert("Por favor, informe o endereço.");
-        return;
-      }
+      if (!endereco) return alert("Por favor, informe o endereço.");
+      if (carrinho.length === 0) return alert("O carrinho está vazio.");
 
-      if (carrinho.length === 0) {
-        alert("O carrinho está vazio.");
-        return;
-      }
-
-      let mensagem = "*Novo pedido de supermercado:*\n\n";
-
+      let mensagem = "*Novo pedido:*\n\n";
       carrinho.forEach(item => {
-        mensagem += `🛒 ${item.quantidade}x ${item.nome} - R$ ${(item.preco * item.quantidade).toFixed(2)}\n`;
+        mensagem += `${item.quantidade}x ${item.nome} - R$ ${(item.preco * item.quantidade).toFixed(2)}\n`;
       });
 
       const total = carrinho.reduce((soma, item) => soma + item.preco * item.quantidade, 0);
-
       mensagem += `\n*Total:* R$ ${total.toFixed(2)}\n`;
-      mensagem += `📍 *Endereço:* ${endereco}\n`;
-      mensagem += `💳 *Forma de pagamento:* ${formaPagamento}\n`;
+      mensagem += `*Endereço:* ${endereco}\n`;
+      mensagem += `*Pagamento:* ${formaPagamento}\n`;
 
       if (formaPagamento === "Dinheiro" && troco) {
-        mensagem += `🪙 *Troco para:* R$ ${troco}`;
+        mensagem += `*Troco para:* R$ ${troco}`;
       }
 
-      const numero = "5584996220061"; // Exemplo: 5581999999999
+      const numero = "55996220061";
       const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
-      window.open(url, '_blank');
+      window.open(url, "_blank");
     }
-  </script>
 
+    renderizarProdutos();
+  </script>
 </body>
 </html>
