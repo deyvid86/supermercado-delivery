@@ -2,25 +2,40 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>Delivery de Supermercado</title>
+  <title>Supermercado Delivery</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
+      max-width: 700px;
+      margin: auto;
     }
     .product {
       border: 1px solid #ddd;
       padding: 15px;
       margin-bottom: 10px;
     }
-    .product h3 {
-      margin: 0 0 10px;
-    }
     .cart {
       margin-top: 20px;
     }
     .checkout {
       margin-top: 20px;
+    }
+    input, select, button {
+      padding: 10px;
+      margin-top: 5px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #28a745;
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
     }
   </style>
 </head>
@@ -32,14 +47,20 @@
 
   <h2>Carrinho</h2>
   <ul id="cart-list"></ul>
+  <p><strong>Total: R$ <span id="total">0.00</span></strong></p>
 
   <div class="checkout">
     <h3>Endereço de entrega</h3>
-    <input type="text" id="endereco" placeholder="Digite seu endereço completo" style="width: 100%; padding: 10px;" />
+    <input type="text" id="endereco" placeholder="Digite seu endereço completo" />
 
-    <h3>Pagamento</h3>
-    <p><strong>Pagamento na entrega</strong> (Dinheiro ou Pix)</p>
+    <h3>Forma de pagamento</h3>
+    <select id="forma-pagamento">
+      <option value="Dinheiro">Dinheiro</option>
+      <option value="Pix">Pix</option>
+      <option value="Cartão">Cartão</option>
+    </select>
 
+    <br><br>
     <button onclick="enviarPedido()">Finalizar pedido via WhatsApp</button>
   </div>
 
@@ -56,6 +77,7 @@
 
     const listaProdutos = document.getElementById("product-list");
     const listaCarrinho = document.getElementById("cart-list");
+    const totalSpan = document.getElementById("total");
 
     produtos.forEach((produto, index) => {
       const div = document.createElement("div");
@@ -63,7 +85,7 @@
       div.innerHTML = `
         <h3>${produto.nome}</h3>
         <p>Preço: R$ ${produto.preco.toFixed(2)}</p>
-        <input type="number" id="quantidade-${index}" min="1" value="1" style="width: 60px;" />
+        <input type="number" id="quantidade-${index}" min="1" value="1" />
         <button onclick="adicionarCarrinho(${index})">Adicionar ao carrinho</button>
       `;
       listaProdutos.appendChild(div);
@@ -83,19 +105,25 @@
 
     function atualizarCarrinho() {
       listaCarrinho.innerHTML = "";
+      let total = 0;
       carrinho.forEach(item => {
         const li = document.createElement("li");
         li.innerText = `${item.quantidade}x ${item.nome} - R$ ${(item.preco * item.quantidade).toFixed(2)}`;
         listaCarrinho.appendChild(li);
+        total += item.preco * item.quantidade;
       });
+      totalSpan.innerText = total.toFixed(2);
     }
 
     function enviarPedido() {
       const endereco = document.getElementById("endereco").value.trim();
+      const pagamento = document.getElementById("forma-pagamento").value;
+
       if (carrinho.length === 0) {
         alert("Adicione produtos ao carrinho!");
         return;
       }
+
       if (!endereco) {
         alert("Digite o endereço de entrega.");
         return;
@@ -107,9 +135,9 @@
       });
 
       const total = carrinho.reduce((sum, item) => sum + (item.preco * item.quantidade), 0);
-      mensagem += `\n*Total: R$ ${total.toFixed(2)}*\n`;
-      mensagem += `\n📍 Endereço: ${endereco}`;
-      mensagem += `\n💰 Pagamento: na entrega (Dinheiro/Pix)`;
+      mensagem += `\n*Total: R$ ${total.toFixed(2)}*`;
+      mensagem += `\n📍 *Endereço:* ${endereco}`;
+      mensagem += `\n💳 *Pagamento:* ${pagamento}`;
 
       const telefone = "5584996220061"; // Ex: 5581999999999
       const url = `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`;
