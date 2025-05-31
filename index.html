@@ -3,12 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <title>Supermercado Delivery</title>
+  <!-- Font Awesome para ícones -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
       max-width: 900px;
       margin: auto;
+      background-color: #f9f9f9;
     }
     .categoria-bar {
       display: flex;
@@ -32,56 +35,74 @@
       margin-bottom: 20px;
       width: 100%;
       padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
     }
     .product {
       border: 1px solid #ccc;
+      background-color: white;
       padding: 10px;
       display: flex;
       gap: 10px;
       margin-bottom: 10px;
       align-items: center;
+      border-radius: 5px;
     }
     .product img {
       width: 80px;
       height: 80px;
       object-fit: cover;
+      border-radius: 5px;
     }
     .product-info {
       flex: 1;
     }
-    input, select, button {
+    input, select {
       padding: 10px;
       margin-top: 10px;
       width: 100%;
       box-sizing: border-box;
+      border-radius: 5px;
+      border: 1px solid #ccc;
     }
     button {
-      background-color: green;
+      padding: 10px;
+      background-color: #28a745;
       color: white;
       font-weight: bold;
       border: none;
       cursor: pointer;
+      border-radius: 5px;
     }
     button:hover {
-      background-color: darkgreen;
+      background-color: #218838;
     }
     .remover-btn {
-      background-color: red;
+      background-color: #dc3545;
       margin-left: 10px;
-      padding: 4px 8px;
       font-size: 12px;
     }
+    .remover-btn:hover {
+      background-color: #c82333;
+    }
     .clear-cart {
-      background-color: #555;
+      background-color: #6c757d;
       margin-top: 10px;
     }
+    .clear-cart:hover {
+      background-color: #5a6268;
+    }
     .quantidade-btn {
-      background-color: #333;
+      background-color: #007bff;
       color: white;
-      padding: 4px 8px;
+      padding: 6px 10px;
       margin: 0 5px;
       font-size: 14px;
       border: none;
+      border-radius: 4px;
+    }
+    .quantidade-btn:hover {
+      background-color: #0056b3;
     }
     .cart, .checkout {
       margin-top: 30px;
@@ -95,24 +116,24 @@
 
   <h1>Supermercado Delivery</h1>
 
-  <input type="text" id="search" class="search-bar" placeholder="Buscar produto..." onkeyup="renderizarProdutos()" />
+  <input type="text" id="search" class="search-bar" placeholder="🔍 Buscar produto..." onkeyup="renderizarProdutos()" />
 
   <div class="categoria-bar" id="categoria-bar"></div>
 
   <div id="product-list"></div>
 
   <div class="cart">
-    <h2>Carrinho</h2>
+    <h2>🛒 Carrinho</h2>
     <ul id="cart-items"></ul>
     <p><strong>Total: R$ <span id="total">0.00</span></strong></p>
-    <button class="clear-cart" onclick="limparCarrinho()">Remover tudo do carrinho</button>
+    <button class="clear-cart" onclick="limparCarrinho()"><i class="fas fa-trash"></i> Remover tudo</button>
   </div>
 
   <div class="checkout">
-    <h3>Endereço de entrega</h3>
+    <h3>📍 Endereço de entrega</h3>
     <input type="text" id="endereco" placeholder="Digite seu endereço completo" />
 
-    <h3>Forma de pagamento</h3>
+    <h3>💳 Forma de pagamento</h3>
     <select id="forma-pagamento" onchange="verificarPagamento()">
       <option value="Pix">Pix</option>
       <option value="Cartão">Cartão</option>
@@ -120,12 +141,12 @@
     </select>
 
     <div id="troco-container">
-      <h4>Troco para quanto?</h4>
+      <h4>💵 Troco para quanto?</h4>
       <input type="text" id="troco" placeholder="Ex: 100.00" />
     </div>
 
     <br />
-    <button onclick="finalizarPedido()">Finalizar Pedido no WhatsApp</button>
+    <button onclick="finalizarPedido()"><i class="fab fa-whatsapp"></i> Finalizar Pedido no WhatsApp</button>
   </div>
 
   <script>
@@ -178,7 +199,9 @@
             <strong>${produto.nome}</strong><br/>
             Preço: R$ ${produto.preco.toFixed(2)}<br/>
             <input type="number" id="qtd-${produto.nome}" value="1" min="1" />
-            <button onclick="adicionarAoCarrinho('${produto.nome}')">Adicionar ao carrinho</button>
+            <button onclick="adicionarAoCarrinho('${produto.nome}')">
+              <i class="fas fa-cart-plus"></i> Adicionar
+            </button>
           </div>
         `;
         lista.appendChild(div);
@@ -209,10 +232,16 @@
         li.innerHTML = `
           ${item.nome} - R$ ${(item.preco * item.quantidade).toFixed(2)}
           <div>
-            <button class="quantidade-btn" onclick="alterarQuantidade(${index}, -1)">-</button>
+            <button class="quantidade-btn" onclick="alterarQuantidade(${index}, -1)">
+              <i class="fas fa-minus"></i>
+            </button>
             ${item.quantidade}
-            <button class="quantidade-btn" onclick="alterarQuantidade(${index}, 1)">+</button>
-            <button class="remover-btn" onclick="removerDoCarrinho(${index})">Remover</button>
+            <button class="quantidade-btn" onclick="alterarQuantidade(${index}, 1)">
+              <i class="fas fa-plus"></i>
+            </button>
+            <button class="remover-btn" onclick="removerDoCarrinho(${index})">
+              <i class="fas fa-trash"></i>
+            </button>
           </div>
         `;
         listaCarrinho.appendChild(li);
