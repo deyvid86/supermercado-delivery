@@ -10,8 +10,28 @@
       max-width: 900px;
       margin: auto;
     }
+    .categoria-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .categoria-bar button {
+      padding: 10px 15px;
+      border: none;
+      background-color: #ddd;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .categoria-bar button.ativa {
+      background-color: #28a745;
+      color: white;
+      font-weight: bold;
+    }
     .search-bar {
       margin-bottom: 20px;
+      width: 100%;
+      padding: 10px;
     }
     .product {
       border: 1px solid #ccc;
@@ -28,12 +48,6 @@
     }
     .product-info {
       flex: 1;
-    }
-    .category-title {
-      margin-top: 30px;
-      font-size: 20px;
-      border-bottom: 2px solid #ccc;
-      padding-bottom: 5px;
     }
     input, select, button {
       padding: 10px;
@@ -83,6 +97,8 @@
 
   <input type="text" id="search" class="search-bar" placeholder="Buscar produto..." onkeyup="renderizarProdutos()" />
 
+  <div class="categoria-bar" id="categoria-bar"></div>
+
   <div id="product-list"></div>
 
   <div class="cart">
@@ -114,50 +130,58 @@
 
   <script>
     const produtos = [
-      { nome: "Arroz 5kg", preco: 25, categoria: "Alimentos", imagem: "https://m.media-amazon.com/images/I/71rBEHnIkXL._AC_SX679_.jpg" },
-      { nome: "Feijão 1kg", preco: 7, categoria: "Alimentos", imagem: "https://via.placeholder.com/80?text=Feijao" },
-      { nome: "Macarrão", preco: 5, categoria: "Alimentos", imagem: "https://via.placeholder.com/80?text=Macarrao" },
-      { nome: "Óleo", preco: 6, categoria: "Alimentos", imagem: "https://via.placeholder.com/80?text=Oleo" },
-      { nome: "Detergente", preco: 3, categoria: "Limpeza", imagem: "https://via.placeholder.com/80?text=Detergente" },
-      { nome: "Sabão em pó", preco: 10, categoria: "Limpeza", imagem: "https://via.placeholder.com/80?text=Sabao" }
+      { nome: "Arroz 5kg", preco: 25, categoria: "Alimentos", imagem: "https://i.imgur.com/VXU0NoD.jpg" },
+      { nome: "Feijão 1kg", preco: 7, categoria: "Alimentos", imagem: "https://i.imgur.com/ANlt36T.jpg" },
+      { nome: "Macarrão", preco: 5, categoria: "Alimentos", imagem: "https://i.imgur.com/pVo3mPw.jpg" },
+      { nome: "Óleo", preco: 6, categoria: "Alimentos", imagem: "https://i.imgur.com/tQdI5Iw.jpg" },
+      { nome: "Detergente", preco: 3, categoria: "Limpeza", imagem: "https://i.imgur.com/MJJk0e4.jpg" },
+      { nome: "Sabão em pó", preco: 10, categoria: "Limpeza", imagem: "https://i.imgur.com/tk7RtUw.jpg" }
     ];
 
     const carrinho = [];
+    let categoriaSelecionada = "Todas";
+
+    function gerarCategorias() {
+      const categorias = ["Todas", ...new Set(produtos.map(p => p.categoria))];
+      const barra = document.getElementById("categoria-bar");
+      barra.innerHTML = "";
+      categorias.forEach(cat => {
+        const btn = document.createElement("button");
+        btn.textContent = cat;
+        if (cat === categoriaSelecionada) btn.classList.add("ativa");
+        btn.onclick = () => {
+          categoriaSelecionada = cat;
+          renderizarProdutos();
+          gerarCategorias();
+        };
+        barra.appendChild(btn);
+      });
+    }
 
     function renderizarProdutos() {
       const lista = document.getElementById("product-list");
       const busca = document.getElementById("search").value.toLowerCase();
       lista.innerHTML = "";
 
-      const categorias = [...new Set(produtos.map(p => p.categoria))];
+      const filtrados = produtos.filter(p => {
+        const correspondeCategoria = categoriaSelecionada === "Todas" || p.categoria === categoriaSelecionada;
+        const correspondeBusca = p.nome.toLowerCase().includes(busca);
+        return correspondeCategoria && correspondeBusca;
+      });
 
-      categorias.forEach(cat => {
-        const categoriaDiv = document.createElement("div");
-        const produtosCategoria = produtos.filter(p => p.categoria === cat && p.nome.toLowerCase().includes(busca));
-
-        if (produtosCategoria.length > 0) {
-          const titulo = document.createElement("h2");
-          titulo.className = "category-title";
-          titulo.textContent = cat;
-          categoriaDiv.appendChild(titulo);
-
-          produtosCategoria.forEach((produto, index) => {
-            const div = document.createElement("div");
-            div.className = "product";
-            div.innerHTML = `
-              <img src="${produto.imagem}" alt="${produto.nome}" />
-              <div class="product-info">
-                <strong>${produto.nome}</strong><br/>
-                Preço: R$ ${produto.preco.toFixed(2)}<br/>
-                <input type="number" id="qtd-${produto.nome}" value="1" min="1" />
-                <button onclick="adicionarAoCarrinho('${produto.nome}')">Adicionar ao carrinho</button>
-              </div>
-            `;
-            categoriaDiv.appendChild(div);
-          });
-
-          lista.appendChild(categoriaDiv);
-        }
+      filtrados.forEach(produto => {
+        const div = document.createElement("div");
+        div.className = "product";
+        div.innerHTML = `
+          <img src="${produto.imagem}" alt="${produto.nome}" />
+          <div class="product-info">
+            <strong>${produto.nome}</strong><br/>
+            Preço: R$ ${produto.preco.toFixed(2)}<br/>
+            <input type="number" id="qtd-${produto.nome}" value="1" min="1" />
+            <button onclick="adicionarAoCarrinho('${produto.nome}')">Adicionar ao carrinho</button>
+          </div>
+        `;
+        lista.appendChild(div);
       });
     }
 
@@ -242,11 +266,12 @@
         mensagem += `*Troco para:* R$ ${troco}`;
       }
 
-      const numero = "55996220061";
+      const numero = "SEU_NUMERO_AQUI";
       const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
       window.open(url, "_blank");
     }
 
+    gerarCategorias();
     renderizarProdutos();
   </script>
 </body>
