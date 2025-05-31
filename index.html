@@ -533,11 +533,11 @@
         return;
       }
 
-      let mensagem = `*Pedido de Supermercado*\n\n*Nome:* ${nome}\n*Endereço:* ${endereco}\n*Pagamento:* ${pagamento}`;
+      let mensagem = `*Pedido de Supermercado*\n\n*Nome:* ${nome}\n*📍Endereço:* ${endereco}\n*💳Pagamento:* ${pagamento}`;
       if (pagamento === 'dinheiro' && troco) {
-        mensagem += `\n*Troco para:* R$ ${parseFloat(troco).toFixed(2)}`;
+        mensagem += `\n*🪙 Troco para:* R$ ${parseFloat(troco).toFixed(2)}`;
       }
-      mensagem += `\n\n*Produtos:*`;
+      mensagem += `\n\n*🛒Produtos:*`;
       Object.entries(carrinho).forEach(([id, qtd]) => {
         const produto = produtos.find(p => p.id == id);
         mensagem += `\n- ${produto.nome} x${qtd} (R$ ${(produto.preco * qtd).toFixed(2)})`;
