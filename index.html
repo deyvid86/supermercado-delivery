@@ -51,6 +51,18 @@
       background-color: #555;
       margin-top: 10px;
     }
+    .quantidade-btn {
+      background-color: #333;
+      color: white;
+      padding: 4px 8px;
+      margin: 0 5px;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+    }
+    .quantidade-btn:hover {
+      background-color: #111;
+    }
   </style>
 </head>
 <body>
@@ -117,7 +129,14 @@
       const qtd = parseInt(document.getElementById(`qtd-${index}`).value);
       if (qtd < 1) return;
       const produto = produtos[index];
-      carrinho.push({ ...produto, quantidade: qtd });
+
+      // Verifica se já existe no carrinho
+      const existente = carrinho.find(item => item.nome === produto.nome);
+      if (existente) {
+        existente.quantidade += qtd;
+      } else {
+        carrinho.push({ ...produto, quantidade: qtd });
+      }
       atualizarCarrinho();
     }
 
@@ -128,14 +147,28 @@
       carrinho.forEach((item, index) => {
         const li = document.createElement("li");
         li.innerHTML = `
-          ${item.quantidade}x ${item.nome} - R$ ${(item.preco * item.quantidade).toFixed(2)}
-          <button class="remover-btn" onclick="removerDoCarrinho(${index})">Remover</button>
+          <span>
+            ${item.nome} - R$ ${(item.preco * item.quantidade).toFixed(2)}
+          </span>
+          <div style="margin: 5px 0;">
+            <button class="quantidade-btn" onclick="alterarQuantidade(${index}, -1)">-</button>
+            <strong>${item.quantidade}</strong>
+            <button class="quantidade-btn" onclick="alterarQuantidade(${index}, 1)">+</button>
+            <button class="remover-btn" onclick="removerDoCarrinho(${index})">Remover</button>
+          </div>
         `;
         listaCarrinho.appendChild(li);
         total += item.preco * item.quantidade;
       });
 
       totalSpan.textContent = total.toFixed(2);
+    }
+
+    function alterarQuantidade(index, delta) {
+      if (carrinho[index].quantidade + delta >= 1) {
+        carrinho[index].quantidade += delta;
+      }
+      atualizarCarrinho();
     }
 
     function removerDoCarrinho(index) {
@@ -190,7 +223,7 @@
         mensagem += `🪙 *Troco para:* R$ ${troco}`;
       }
 
-      const numero = "5584996220061"; // Ex: 5581999999999
+      const numero = "5584996220061"; // Exemplo: 5581999999999
       const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
       window.open(url, '_blank');
     }
