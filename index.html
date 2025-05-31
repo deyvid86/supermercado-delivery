@@ -1,556 +1,572 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Delivery Supermercado</title>
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-  />
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-      background: #f9f9f9;
+      margin: 0; padding: 0;
+      background: #f8f8f8;
     }
     header {
       display: flex;
       align-items: center;
-      gap: 15px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
+      background: #2e8b57;
+      color: white;
+      padding: 10px 20px;
       position: sticky;
       top: 0;
-      background: white;
-      padding: 10px 20px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
       z-index: 1000;
     }
-    .categorias {
+    #categorias {
       display: flex;
-      gap: 10px;
+      gap: 15px;
       flex-wrap: wrap;
-      flex: 1;
+      margin-left: 20px;
+      flex-grow: 1;
     }
-    .categoria-btn {
-      background: #007bff;
+    #categorias button {
+      background: white;
       border: none;
-      color: white;
       padding: 8px 14px;
-      border-radius: 5px;
+      border-radius: 20px;
+      color: #2e8b57;
+      font-weight: bold;
       cursor: pointer;
-      font-weight: 600;
-      transition: background 0.3s;
-      user-select: none;
+      transition: background-color 0.3s;
     }
-    .categoria-btn:hover,
-    .categoria-btn.active {
-      background: #0056b3;
+    #categorias button:hover,
+    #categorias button.active {
+      background: #196f3d;
+      color: white;
     }
     #busca {
-      padding: 8px 12px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      flex-basis: 250px;
-      font-size: 14px;
+      padding: 6px 10px;
+      border-radius: 20px;
+      border: none;
+      width: 180px;
+      margin-right: 20px;
     }
     #botao-carrinho {
-      background: none;
+      position: relative;
+      background: transparent;
       border: none;
       cursor: pointer;
+      color: white;
       font-size: 24px;
-      position: relative;
-      color: #007bff;
-      transition: color 0.3s;
     }
     #botao-carrinho:hover {
-      color: #0056b3;
+      color: #a3d9a5;
     }
-    #botao-carrinho .badge {
+    #badge-carrinho {
       position: absolute;
-      top: -6px;
-      right: -10px;
+      top: 0;
+      right: -5px;
       background: red;
       color: white;
-      border-radius: 50%;
       font-size: 12px;
+      border-radius: 50%;
       padding: 2px 6px;
+      display: none;
       font-weight: bold;
     }
-
     main {
       display: flex;
-      gap: 40px;
       flex-wrap: wrap;
+      padding: 20px;
+      gap: 20px;
       justify-content: center;
-    }
-    .produtos {
-      display: grid;
-      grid-template-columns: repeat(auto-fill,minmax(180px,1fr));
-      gap: 18px;
-      flex: 2;
-      max-width: 900px;
+      background: #f8f8f8;
     }
     .produto-card {
       background: white;
       border-radius: 8px;
-      box-shadow: 0 3px 8px rgb(0 0 0 / 0.1);
-      padding: 10px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      width: 180px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      text-align: center;
+      padding: 10px;
       transition: transform 0.2s;
     }
     .produto-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 6px 14px rgb(0 0 0 / 0.15);
+      transform: scale(1.05);
     }
     .produto-card img {
-      max-width: 100%;
-      border-radius: 6px;
-      height: 120px;
+      width: 150px;
+      height: 150px;
       object-fit: contain;
+      border-radius: 8px;
+    }
+    .produto-nome {
+      font-weight: bold;
+      margin: 10px 0 5px;
+      text-align: center;
+      min-height: 40px;
+    }
+    .produto-preco {
+      color: #2e8b57;
+      font-weight: bold;
       margin-bottom: 10px;
     }
-    .produto-card h3 {
-      margin: 6px 0 4px;
-      font-size: 16px;
-      color: #333;
+    .produto-actions {
+      display: flex;
+      gap: 5px;
+      width: 100%;
+      justify-content: center;
     }
-    .produto-card p {
-      color: #555;
-      font-weight: 600;
-      margin: 0 0 10px;
-    }
-    .produto-card input[type="number"] {
-      width: 50px;
-      padding: 5px;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      margin-bottom: 8px;
-      text-align: center;
-    }
-    .btn-adicionar {
-      background: #28a745;
-      color: white;
+    .produto-actions button {
+      flex: 1;
+      padding: 6px 8px;
       border: none;
-      padding: 8px 14px;
       border-radius: 5px;
       cursor: pointer;
-      font-weight: 600;
+      font-weight: bold;
+      color: white;
+      background-color: #2e8b57;
       display: flex;
       align-items: center;
-      gap: 6px;
       justify-content: center;
-      transition: background 0.3s;
+      gap: 5px;
+      transition: background-color 0.3s;
     }
-    .btn-adicionar:hover {
-      background: #1e7e34;
+    .produto-actions button:hover {
+      background-color: #196f3d;
     }
-
-    .carrinho-container {
-      flex: 1;
-      max-width: 350px;
+    /* Ícones simples com Unicode */
+    .icon-plus::before {
+      content: "+";
+      font-weight: bold;
+    }
+    .icon-minus::before {
+      content: "-";
+      font-weight: bold;
+    }
+    .icon-cart::before {
+      content: "🛒";
+    }
+    /* Carrinho */
+    #carrinho-container {
       background: white;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+      padding: 15px;
       border-radius: 8px;
-      box-shadow: 0 3px 8px rgb(0 0 0 / 0.1);
-      padding: 15px 20px;
-      height: fit-content;
-      position: sticky;
-      top: 80px;
-    }
-    .carrinho-container h2 {
-      margin-top: 0;
-      margin-bottom: 12px;
-      font-size: 20px;
-      color: #333;
-      border-bottom: 2px solid #007bff;
-      padding-bottom: 6px;
-    }
-    #itens-carrinho {
-      list-style: none;
-      padding: 0;
-      margin: 0 0 15px 0;
-      max-height: 320px;
+      width: 350px;
+      position: fixed;
+      right: 20px;
+      top: 70px;
+      bottom: 20px;
       overflow-y: auto;
+      font-size: 14px;
+      display: flex;
+      flex-direction: column;
+      z-index: 2000;
     }
-    #itens-carrinho li {
+    #carrinho-container h2 {
+      margin-top: 0;
+      color: #2e8b57;
+      text-align: center;
+    }
+    .item-carrinho {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 6px 0;
-      border-bottom: 1px solid #eee;
-      font-size: 14px;
-      color: #333;
+      border-bottom: 1px solid #ddd;
+      padding: 8px 0;
+      gap: 10px;
     }
-    #itens-carrinho li span {
+    .item-info {
       flex: 1;
+      min-width: 0;
     }
-    .controles {
+    .item-nome {
+      font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .item-quantidade {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
+      margin-top: 5px;
     }
-    .qty-btn {
-      background: #007bff;
+    .item-quantidade button {
+      background: #2e8b57;
       border: none;
       color: white;
-      width: 26px;
-      height: 26px;
+      padding: 2px 8px;
       border-radius: 4px;
       cursor: pointer;
-      font-size: 14px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transition: background 0.3s;
+      font-weight: bold;
     }
-    .qty-btn:hover {
-      background: #0056b3;
+    .item-quantidade span {
+      min-width: 20px;
+      text-align: center;
     }
-    .controles button[title="Remover"] {
-      background: #dc3545;
-      font-size: 16px;
-      padding: 2px 6px;
-      border-radius: 4px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transition: background 0.3s;
+    .item-preco {
+      min-width: 65px;
+      text-align: right;
+      font-weight: bold;
+      color: #2e8b57;
     }
-    .controles button[title="Remover"]:hover {
-      background: #a71d2a;
-    }
-
-    #remover-tudo-btn {
-      background: #dc3545;
+    .item-remover {
+      background: #cc3d3d;
       border: none;
       color: white;
-      width: 100%;
-      padding: 10px 0;
-      font-weight: 700;
-      border-radius: 5px;
+      border-radius: 4px;
+      padding: 4px 6px;
       cursor: pointer;
-      transition: background 0.3s;
-      margin-bottom: 15px;
-    }
-    #remover-tudo-btn:hover {
-      background: #a71d2a;
+      font-weight: bold;
+      font-size: 12px;
     }
     #total {
-      font-weight: 700;
-      font-size: 16px;
+      font-weight: bold;
       text-align: right;
-      margin-bottom: 10px;
-      color: #007bff;
+      margin-top: 10px;
+      color: #2e8b57;
+      font-size: 16px;
     }
-
-    form label {
-      display: block;
-      margin: 8px 0 4px 0;
-      font-weight: 600;
-      color: #333;
+    #limpar-carrinho {
+      margin-top: 10px;
+      padding: 8px;
+      border: none;
+      background-color: #cc3d3d;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+      font-weight: bold;
     }
-    form input[type="text"],
-    form input[type="number"],
-    form select {
-      width: 100%;
-      padding: 7px 8px;
-      margin-bottom: 12px;
+    form#form-pedido {
+      margin-top: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    form#form-pedido input, 
+    form#form-pedido select {
+      padding: 8px;
       border-radius: 5px;
       border: 1px solid #ccc;
       font-size: 14px;
+      width: 100%;
+      box-sizing: border-box;
     }
     #troco-container {
       display: none;
     }
-    #finalizar-btn {
-      background: #007bff;
+    form#form-pedido button[type="submit"],
+    form#form-pedido button[type="button"] {
+      background-color: #2e8b57;
       color: white;
       border: none;
-      padding: 12px 18px;
+      padding: 10px;
       border-radius: 5px;
+      font-weight: bold;
       cursor: pointer;
-      font-weight: 700;
-      width: 100%;
-      font-size: 16px;
-      transition: background 0.3s;
+      transition: background-color 0.3s;
     }
-    #finalizar-btn:hover {
-      background: #0056b3;
+    form#form-pedido button[type="submit"]:hover,
+    form#form-pedido button[type="button"]:hover {
+      background-color: #196f3d;
     }
 
-    /* Scrollbar carrinho */
-    #itens-carrinho::-webkit-scrollbar {
-      width: 8px;
-    }
-    #itens-carrinho::-webkit-scrollbar-thumb {
-      background-color: #007bff;
-      border-radius: 4px;
-    }
-
-    /* Responsividade */
-    @media (max-width: 900px) {
-      main {
-        flex-direction: column;
-        align-items: center;
-      }
-      .carrinho-container {
+    /* Responsivo */
+    @media (max-width: 768px) {
+      #carrinho-container {
         position: static;
         width: 100%;
-        max-width: none;
-        margin-top: 30px;
+        height: auto;
+        max-height: none;
+        margin-top: 20px;
+      }
+      main {
+        justify-content: center;
       }
     }
   </style>
 </head>
 <body>
   <header>
-    <div class="categorias" id="categorias"></div>
-
-    <input type="text" id="busca" placeholder="Buscar produto..." oninput="buscarProdutos()" />
-
-    <!-- Botão ícone do carrinho -->
-    <button id="botao-carrinho" title="Ver Carrinho" aria-label="Ver Carrinho">
-      <i class="fas fa-shopping-cart"></i>
-      <span class="badge" id="badge-carrinho">0</span>
+    <strong>Delivery Supermercado</strong>
+    <nav id="categorias"></nav>
+    <input type="text" id="busca" placeholder="Buscar produto..." />
+    <button id="botao-carrinho" title="Ver carrinho">
+      🛒 <span id="badge-carrinho">0</span>
     </button>
   </header>
 
-  <main>
-    <section class="produtos" id="produtos"></section>
+  <main id="produtos-container"></main>
 
-    <section class="carrinho-container" id="carrinho-container" tabindex="-1">
-      <h2>Carrinho</h2>
-      <button id="remover-tudo-btn" onclick="removerTudo()">Remover Tudo</button>
-      <ul id="itens-carrinho"></ul>
-      <div id="total">Total: R$ 0.00</div>
+  <section id="carrinho-container" tabindex="-1" aria-label="Carrinho de compras">
+    <h2>Carrinho</h2>
+    <div id="itens-carrinho"></div>
+    <div id="total">Total: R$ 0.00</div>
+    <button id="limpar-carrinho">Limpar carrinho</button>
 
-      <form id="form-pedido" onsubmit="event.preventDefault(); finalizarPedido();">
-        <label for="nome">Nome:</label>
-        <input type="text" id="nome" required />
-
-        <label for="endereco">Endereço:</label>
-        <input type="text" id="endereco" required />
-
-        <label for="pagamento">Forma de pagamento:</label>
-        <select id="pagamento" onchange="mostrarTroco()" required>
-          <option value="">Selecione</option>
-          <option value="pix">Pix</option>
-          <option value="cartao">Cartão</option>
-          <option value="dinheiro">Dinheiro</option>
-        </select>
-
-        <div id="troco-container">
-          <label for="troco">Troco para:</label>
-          <input type="number" id="troco" min="0" step="0.01" placeholder="Valor do troco" />
-        </div>
-
-        <button id="finalizar-btn" type="submit">
-          Finalizar Pedido <i class="fas fa-paper-plane"></i>
-        </button>
-      </form>
-    </section>
-  </main>
+    <form id="form-pedido" onsubmit="event.preventDefault(); finalizarPedido();">
+      <input type="text" id="nome" placeholder="Seu nome" required />
+      <input type="text" id="endereco" placeholder="Endereço de entrega" required />
+      <select id="pagamento" onchange="mostrarTroco()" required>
+        <option value="" disabled selected>Forma de pagamento</option>
+        <option value="pix">Pix</option>
+        <option value="cartao">Cartão</option>
+        <option value="dinheiro">Dinheiro</option>
+      </select>
+      <div id="troco-container">
+        <input type="number" id="troco" min="0" step="0.01" placeholder="Troco para quanto?" />
+      </div>
+      <button type="submit">Finalizar pedido</button>
+      <button type="button" onclick="enviarWhatsApp()" style="margin-left: 10px;">Enviar pedido pelo WhatsApp</button>
+    </form>
+  </section>
 
   <script>
-    // Produtos com categoria e imagem
+    // Dados dos produtos (exemplo com imagens e categorias)
     const produtos = [
-      {
-        nome: "Arroz Branco 5kg",
-        preco: 20.0,
-        categoria: "Grãos",
-        imagem: "https://i.imgur.com/okZd6Z5.png",
-      },
-      {
-        nome: "Feijão Carioca 1kg",
-        preco: 8.5,
-        categoria: "Grãos",
-        imagem: "https://i.imgur.com/R9vRGyM.png",
-      },
-      {
-        nome: "Leite Integral 1L",
-        preco: 4.7,
-        categoria: "Laticínios",
-        imagem: "https://i.imgur.com/p9R28Ga.png",
-      },
-      {
-        nome: "Queijo Mussarela 500g",
-        preco: 18.9,
-        categoria: "Laticínios",
-        imagem: "https://i.imgur.com/0NqhLLS.png",
-      },
-      {
-        nome: "Banana Nanica 1kg",
-        preco: 5.2,
-        categoria: "Frutas",
-        imagem: "https://i.imgur.com/yJCD5Kw.png",
-      },
-      {
-        nome: "Maçã Fuji 1kg",
-        preco: 7.0,
-        categoria: "Frutas",
-        imagem: "https://i.imgur.com/y5K6c3L.png",
-      },
+      { id: 1, nome: "Arroz 5kg", preco: 20.5, categoria: "Grãos", imagem: "https://cdn-icons-png.flaticon.com/512/3075/3075977.png" },
+      { id: 2, nome: "Feijão 1kg", preco: 7.9, categoria: "Grãos", imagem: "https://cdn-icons-png.flaticon.com/512/1046/1046750.png" },
+      { id: 3, nome: "Leite Integral 1L", preco: 4.5, categoria: "Laticínios", imagem: "https://cdn-icons-png.flaticon.com/512/3664/3664850.png" },
+      { id: 4, nome: "Queijo Mussarela 500g", preco: 15.3, categoria: "Laticínios", imagem: "https://cdn-icons-png.flaticon.com/512/149/149852.png" },
+      { id: 5, nome: "Banana", preco: 2.8, categoria: "Frutas", imagem: "https://cdn-icons-png.flaticon.com/512/415/415733.png" },
+      { id: 6, nome: "Maçã", preco: 3.2, categoria: "Frutas", imagem: "https://cdn-icons-png.flaticon.com/512/415/415750.png" },
+      { id: 7, nome: "Tomate", preco: 3.0, categoria: "Legumes", imagem: "https://cdn-icons-png.flaticon.com/512/135/135620.png" },
+      { id: 8, nome: "Batata", preco: 2.5, categoria: "Legumes", imagem: "https://cdn-icons-png.flaticon.com/512/135/135621.png" },
     ];
 
     let carrinho = [];
 
-    // Renderizar categorias
-    function renderizarCategorias() {
-      const categorias = [...new Set(produtos.map(p => p.categoria))];
-      const divCategorias = document.getElementById("categorias");
-      divCategorias.innerHTML = "";
+    // Pega categorias únicas dos produtos
+    function getCategorias() {
+      const cats = produtos.map(p => p.categoria);
+      return [...new Set(cats)];
+    }
 
-      // Botão para mostrar todos
+    // Renderiza categorias na barra superior
+    function renderizarCategorias() {
+      const container = document.getElementById("categorias");
+      const categorias = getCategorias();
+      container.innerHTML = '';
       const btnTodos = document.createElement("button");
       btnTodos.textContent = "Todos";
-      btnTodos.className = "categoria-btn active";
+      btnTodos.classList.add("active");
       btnTodos.onclick = () => {
-        document.querySelectorAll(".categoria-btn").forEach(b => b.classList.remove("active"));
+        document.querySelectorAll("#categorias button").forEach(btn => btn.classList.remove("active"));
         btnTodos.classList.add("active");
         renderizarProdutos();
       };
-      divCategorias.appendChild(btnTodos);
+      container.appendChild(btnTodos);
 
       categorias.forEach(categoria => {
         const btn = document.createElement("button");
         btn.textContent = categoria;
-        btn.className = "categoria-btn";
         btn.onclick = () => {
-          document.querySelectorAll(".categoria-btn").forEach(b => b.classList.remove("active"));
+          document.querySelectorAll("#categorias button").forEach(btn => btn.classList.remove("active"));
           btn.classList.add("active");
           renderizarProdutos(categoria);
         };
-        divCategorias.appendChild(btn);
+        container.appendChild(btn);
       });
     }
 
-    // Renderizar produtos filtrando por categoria e busca
-    function renderizarProdutos(categoria = "") {
-      const divProdutos = document.getElementById("produtos");
+    // Renderiza produtos (filtrados por categoria e busca)
+    function renderizarProdutos(categoriaSelecionada = null) {
+      const container = document.getElementById("produtos-container");
       const busca = document.getElementById("busca").value.toLowerCase();
-      divProdutos.innerHTML = "";
+      container.innerHTML = '';
 
-      const filtrados = produtos.filter(p => {
-        const porCategoria = categoria ? p.categoria === categoria : true;
-        const porBusca = p.nome.toLowerCase().includes(busca);
-        return porCategoria && porBusca;
+      const produtosFiltrados = produtos.filter(p => {
+        const condCategoria = categoriaSelecionada ? p.categoria === categoriaSelecionada : true;
+        const condBusca = p.nome.toLowerCase().includes(busca);
+        return condCategoria && condBusca;
       });
 
-      filtrados.forEach(produto => {
+      if (produtosFiltrados.length === 0) {
+        container.textContent = "Nenhum produto encontrado.";
+        return;
+      }
+
+      produtosFiltrados.forEach(produto => {
         const card = document.createElement("div");
         card.className = "produto-card";
-        card.innerHTML = `
-          <img src="${produto.imagem}" alt="${produto.nome}" />
-          <h3>${produto.nome}</h3>
-          <p>R$ ${produto.preco.toFixed(2)}</p>
-          <input type="number" min="1" value="1" id="qtd-${produto.nome.replace(/\s+/g,'')}" />
-          <button class="btn-adicionar" onclick="adicionarAoCarrinho('${produto.nome}')">
-            <i class="fas fa-cart-plus"></i> Adicionar
-          </button>
-        `;
-        divProdutos.appendChild(card);
+
+        const img = document.createElement("img");
+        img.src = produto.imagem;
+        img.alt = produto.nome;
+        card.appendChild(img);
+
+        const nome = document.createElement("div");
+        nome.className = "produto-nome";
+        nome.textContent = produto.nome;
+        card.appendChild(nome);
+
+        const preco = document.createElement("div");
+        preco.className = "produto-preco";
+        preco.textContent = `R$ ${produto.preco.toFixed(2)}`;
+        card.appendChild(preco);
+
+        const actions = document.createElement("div");
+        actions.className = "produto-actions";
+
+        const btnAdd = document.createElement("button");
+        btnAdd.innerHTML = '<span class="icon-cart"></span> Comprar';
+        btnAdd.onclick = () => adicionarAoCarrinho(produto.id);
+        actions.appendChild(btnAdd);
+
+        card.appendChild(actions);
+        container.appendChild(card);
       });
     }
 
-    // Buscar produtos ao digitar
-    function buscarProdutos() {
-      const ativaCategoria = document.querySelector(".categoria-btn.active");
-      const categoria = ativaCategoria && ativaCategoria.textContent !== "Todos" ? ativaCategoria.textContent : "";
-      renderizarProdutos(categoria);
-    }
-
-    // Adicionar ao carrinho
-    function adicionarAoCarrinho(nome) {
-      const inputQtd = document.getElementById(`qtd-${nome.replace(/\s+/g,'')}`);
-      let quantidade = parseInt(inputQtd.value);
-      if (isNaN(quantidade) || quantidade < 1) quantidade = 1;
-
-      const produto = produtos.find(p => p.nome === nome);
-      if (!produto) return;
-
-      const itemNoCarrinho = carrinho.find(i => i.nome === nome);
-      if (itemNoCarrinho) {
-        itemNoCarrinho.quantidade += quantidade;
+    // Adiciona produto ao carrinho
+    function adicionarAoCarrinho(produtoId) {
+      const produto = produtos.find(p => p.id === produtoId);
+      const item = carrinho.find(i => i.id === produtoId);
+      if (item) {
+        item.quantidade++;
       } else {
-        carrinho.push({ nome, preco: produto.preco, quantidade });
+        carrinho.push({ ...produto, quantidade: 1 });
       }
       renderizarCarrinho();
       atualizarBadge();
     }
 
-    // Renderizar carrinho com controles
+    // Renderiza carrinho
     function renderizarCarrinho() {
-      const ul = document.getElementById("itens-carrinho");
-      ul.innerHTML = "";
+      const container = document.getElementById("itens-carrinho");
+      container.innerHTML = '';
 
-      carrinho.forEach((item, index) => {
-        const li = document.createElement("li");
+      carrinho.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "item-carrinho";
 
-        li.innerHTML = `
-          <span>${item.nome} (R$ ${item.preco.toFixed(2)})</span>
-          <div class="controles">
-            <button class="qty-btn" onclick="alterarQuantidade(${index}, -1)" title="Diminuir quantidade"><i class="fas fa-minus"></i></button>
-            <span>${item.quantidade}</span>
-            <button class="qty-btn" onclick="alterarQuantidade(${index}, 1)" title="Aumentar quantidade"><i class="fas fa-plus"></i></button>
-            <button onclick="removerItem(${index})" title="Remover item"><i class="fas fa-trash"></i></button>
-          </div>
-        `;
-        ul.appendChild(li);
+        const info = document.createElement("div");
+        info.className = "item-info";
+
+        const nome = document.createElement("div");
+        nome.className = "item-nome";
+        nome.textContent = item.nome;
+        info.appendChild(nome);
+
+        const quantidade = document.createElement("div");
+        quantidade.className = "item-quantidade";
+
+        const btnMenos = document.createElement("button");
+        btnMenos.textContent = "-";
+        btnMenos.title = "Diminuir quantidade";
+        btnMenos.onclick = () => {
+          if (item.quantidade > 1) {
+            item.quantidade--;
+          } else {
+            carrinho = carrinho.filter(i => i.id !== item.id);
+          }
+          renderizarCarrinho();
+          atualizarBadge();
+        };
+        quantidade.appendChild(btnMenos);
+
+        const spanQtd = document.createElement("span");
+        spanQtd.textContent = item.quantidade;
+        quantidade.appendChild(spanQtd);
+
+        const btnMais = document.createElement("button");
+        btnMais.textContent = "+";
+        btnMais.title = "Aumentar quantidade";
+        btnMais.onclick = () => {
+          item.quantidade++;
+          renderizarCarrinho();
+          atualizarBadge();
+        };
+        quantidade.appendChild(btnMais);
+
+        info.appendChild(quantidade);
+        div.appendChild(info);
+
+        const preco = document.createElement("div");
+        preco.className = "item-preco";
+        preco.textContent = `R$ ${(item.preco * item.quantidade).toFixed(2)}`;
+        div.appendChild(preco);
+
+        const btnRemover = document.createElement("button");
+        btnRemover.className = "item-remover";
+        btnRemover.textContent = "X";
+        btnRemover.title = "Remover do carrinho";
+        btnRemover.onclick = () => {
+          carrinho = carrinho.filter(i => i.id !== item.id);
+          renderizarCarrinho();
+          atualizarBadge();
+        };
+        div.appendChild(btnRemover);
+
+        container.appendChild(div);
       });
 
-      atualizarTotal();
-      atualizarBadge();
+      const total = carrinho.reduce((acc, item) => acc + item.preco * item.quantidade, 0);
+      document.getElementById("total").textContent = `Total: R$ ${total.toFixed(2)}`;
+
+      // Mostrar/ocultar form pedido dependendo se tem itens
+      document.getElementById("form-pedido").style.display = carrinho.length ? "flex" : "none";
     }
 
-    // Alterar quantidade no carrinho
-    function alterarQuantidade(index, delta) {
-      carrinho[index].quantidade += delta;
-      if (carrinho[index].quantidade < 1) {
-        carrinho.splice(index, 1);
+    // Atualiza badge do carrinho no topo
+    function atualizarBadge() {
+      const badge = document.getElementById("badge-carrinho");
+      const totalQtd = carrinho.reduce((acc, item) => acc + item.quantidade, 0);
+      if (totalQtd > 0) {
+        badge.style.display = "inline-block";
+        badge.textContent = totalQtd;
+      } else {
+        badge.style.display = "none";
       }
-      renderizarCarrinho();
     }
 
-    // Remover item do carrinho
-    function removerItem(index) {
-      carrinho.splice(index, 1);
-      renderizarCarrinho();
-    }
-
-    // Remover tudo do carrinho
-    function removerTudo() {
-      if (confirm("Tem certeza que deseja limpar o carrinho?")) {
+    // Limpar carrinho
+    document.getElementById("limpar-carrinho").onclick = () => {
+      if (confirm("Deseja realmente limpar o carrinho?")) {
         carrinho = [];
         renderizarCarrinho();
+        atualizarBadge();
       }
-    }
+    };
 
-    // Atualizar total do carrinho
-    function atualizarTotal() {
-      const totalDiv = document.getElementById("total");
-      const total = carrinho.reduce((acc, item) => acc + item.preco * item.quantidade, 0);
-      totalDiv.textContent = `Total: R$ ${total.toFixed(2)}`;
-    }
-
-    // Mostrar campo troco quando selecionar dinheiro
+    // Mostrar campo troco somente se pagamento for dinheiro
     function mostrarTroco() {
-      const pagamento = document.getElementById("pagamento").value;
-      const trocoContainer = document.getElementById("troco-container");
-      if (pagamento === "dinheiro") {
-        trocoContainer.style.display = "block";
+      const forma = document.getElementById("pagamento").value;
+      const containerTroco = document.getElementById("troco-container");
+      if (forma === "dinheiro") {
+        containerTroco.style.display = "block";
       } else {
-        trocoContainer.style.display = "none";
+        containerTroco.style.display = "none";
+        document.getElementById("troco").value = "";
       }
     }
 
-    // Finalizar pedido
+    // Finalizar pedido (apenas alerta simples)
     function finalizarPedido() {
+      if (carrinho.length === 0) {
+        alert("Seu carrinho está vazio!");
+        return;
+      }
+      const nome = document.getElementById("nome").value.trim();
+      const endereco = document.getElementById("endereco").value.trim();
+      const pagamento = document.getElementById("pagamento").value;
+      if (!nome || !endereco || !pagamento) {
+        alert("Por favor, preencha todos os campos e escolha a forma de pagamento.");
+        return;
+      }
+      alert("Pedido finalizado com sucesso! Em breve entraremos em contato.");
+      // Aqui você poderia limpar o carrinho e formulário se quiser
+      carrinho = [];
+      renderizarCarrinho();
+      atualizarBadge();
+      document.getElementById("form-pedido").reset();
+      mostrarTroco();
+    }
+
+    // Função para enviar o pedido via WhatsApp
+    function enviarWhatsApp() {
       if (carrinho.length === 0) {
         alert("Seu carrinho está vazio!");
         return;
@@ -567,35 +583,36 @@
         const trocoInput = document.getElementById("troco").value;
         troco = trocoInput ? `\nTroco para: R$ ${parseFloat(trocoInput).toFixed(2)}` : "";
       }
-      let mensagem = `Pedido de ${nome}\nEndereço: ${endereco}\nForma de pagamento: ${pagamento}${troco}\n\nItens:\n`;
+      let mensagem = `*Pedido de ${nome}*\nEndereço: ${endereco}\nForma de pagamento: ${pagamento}${troco}\n\n*Itens:*`;
       carrinho.forEach(item => {
-        mensagem += `- ${item.nome} x ${item.quantidade} = R$ ${(item.preco * item.quantidade).toFixed(2)}\n`;
+        mensagem += `\n- ${item.nome} x ${item.quantidade} = R$ ${(item.preco * item.quantidade).toFixed(2)}`;
       });
       const total = carrinho.reduce((acc, item) => acc + item.preco * item.quantidade, 0);
-      mensagem += `\nTotal: R$ ${total.toFixed(2)}`;
+      mensagem += `\n\n*Total: R$ ${total.toFixed(2)}*`;
 
-      alert("Pedido enviado com sucesso!\n\n" + mensagem);
+      const telefoneLoja = "5584996220061"; // Troque para seu número real no formato DDI + DDD + número
 
-      // Limpar
-      carrinho = [];
-      renderizarCarrinho();
-      document.getElementById("form-pedido").reset();
-      mostrarTroco();
+      const urlWhatsApp = `https://wa.me/${telefoneLoja}?text=${encodeURIComponent(mensagem)}`;
+
+      window.open(urlWhatsApp, "_blank");
     }
 
-    // Atualiza o badge do ícone do carrinho
-    function atualizarBadge() {
-      const badge = document.getElementById("badge-carrinho");
-      const totalItens = carrinho.reduce((acc, item) => acc + item.quantidade, 0);
-      badge.textContent = totalItens;
-      badge.style.display = totalItens > 0 ? "inline-block" : "none";
-    }
+    // Busca ao digitar
+    document.getElementById("busca").addEventListener("input", () => {
+      const ativo = document.querySelector("#categorias button.active");
+      const cat = ativo && ativo.textContent !== "Todos" ? ativo.textContent : null;
+      renderizarProdutos(cat);
+    });
 
-    // Scroll até o carrinho ao clicar no ícone
+    // Mostrar/ocultar carrinho ao clicar no botão do topo
     document.getElementById("botao-carrinho").addEventListener("click", () => {
-      const carrinhoSection = document.getElementById("carrinho-container");
-      carrinhoSection.scrollIntoView({ behavior: "smooth" });
-      carrinhoSection.focus();
+      const carrinhoContainer = document.getElementById("carrinho-container");
+      if (carrinhoContainer.style.display === "none" || carrinhoContainer.style.display === "") {
+        carrinhoContainer.style.display = "flex";
+        carrinhoContainer.focus();
+      } else {
+        carrinhoContainer.style.display = "none";
+      }
     });
 
     // Inicialização
