@@ -382,13 +382,13 @@
       listaProdutos.forEach(produto => {
         const card = document.createElement('div');
         card.className = 'card';
-        card.innerHTML = 
+        card.innerHTML = `
           <img src="${produto.imagem}" alt="${produto.nome}" />
           <h3>${produto.nome}</h3>
           <p>R$ ${produto.preco.toFixed(2)}</p>
           <input type="number" min="1" value="1" aria-label="Quantidade de ${produto.nome}" />
           <button aria-label="Adicionar ${produto.nome} ao carrinho">Adicionar</button>
-        ;
+        `;
         const inputQtd = card.querySelector('input');
         const btnAdicionar = card.querySelector('button');
 
@@ -437,7 +437,7 @@
 
         const divItem = document.createElement('div');
         divItem.className = 'item-carrinho';
-        divItem.innerHTML = 
+        divItem.innerHTML = `
           <div><strong>${produto.nome}</strong></div>
           <div class="item-quantidade" aria-label="Quantidade do produto ${produto.nome}">
             <button aria-label="Diminuir quantidade" data-id="${id}" class="diminuir">−</button>
@@ -446,10 +446,10 @@
           </div>
           <div>R$ ${subtotal.toFixed(2)}</div>
           <button aria-label="Remover ${produto.nome} do carrinho" data-id="${id}" class="item-remover">×</button>
-        ;
+        `;
         itensCarrinhoContainer.appendChild(divItem);
       });
-      totalCarrinho.textContent = Total: R$ ${total.toFixed(2)};
+      totalCarrinho.textContent = `Total: R$ ${total.toFixed(2)}`;
       badgeCarrinho.textContent = totalItens;
       badgeCarrinho.style.display = 'inline-block';
       formPedido.style.display = 'flex';
@@ -533,23 +533,23 @@
         return;
       }
 
-      let mensagem = *Pedido de Supermercado*\n\n*Nome:* ${nome}\n*📍Endereço:* ${endereco}\n*💳Pagamento:* ${pagamento};
+      let mensagem = `*Pedido de Supermercado*\n\n*Nome:* ${nome}\n*Endereço:* ${endereco}\n*Pagamento:* ${pagamento}`;
       if (pagamento === 'dinheiro' && troco) {
-        mensagem += \n*🪙 Troco para:* R$ ${parseFloat(troco).toFixed(2)};
+        mensagem += `\n*Troco para:* R$ ${parseFloat(troco).toFixed(2)}`;
       }
-      mensagem += \n\n*🛒Produtos:*;
+      mensagem += `\n\n*Produtos:*`;
       Object.entries(carrinho).forEach(([id, qtd]) => {
         const produto = produtos.find(p => p.id == id);
-        mensagem += \n- ${produto.nome} x${qtd} (R$ ${(produto.preco * qtd).toFixed(2)});
+        mensagem += `\n- ${produto.nome} x${qtd} (R$ ${(produto.preco * qtd).toFixed(2)})`;
       });
       const total = Object.entries(carrinho).reduce((acc, [id, qtd]) => {
         const p = produtos.find(prod => prod.id == id);
         return acc + p.preco * qtd;
       }, 0);
-      mensagem += \n\n*Total:* R$ ${total.toFixed(2)};
+      mensagem += `\n\n*Total:* R$ ${total.toFixed(2)}`;
 
-      const numeroWhats = "5584996220061"; // Troque pelo número correto
-      const url = https://wa.me/${numeroWhats}?text=${encodeURIComponent(mensagem)};
+      const numeroWhats = "5511999999999"; // Troque pelo número correto
+      const url = `https://wa.me/${numeroWhats}?text=${encodeURIComponent(mensagem)}`;
       window.open(url, '_blank');
     }
 
