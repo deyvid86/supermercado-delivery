@@ -34,6 +34,9 @@
     button:hover {
       background-color: darkgreen;
     }
+    #troco-container {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -53,11 +56,18 @@
     <input type="text" id="endereco" placeholder="Digite seu endereço completo" />
 
     <h3>Forma de pagamento</h3>
-    <label><input type="radio" name="pagamento" value="Pix" checked> Pix</label><br>
-    <label><input type="radio" name="pagamento" value="Cartão"> Cartão</label><br>
-    <label><input type="radio" name="pagamento" value="Dinheiro"> Dinheiro</label>
+    <select id="forma-pagamento" onchange="verificarPagamento()">
+      <option value="Pix">Pix</option>
+      <option value="Cartão">Cartão</option>
+      <option value="Dinheiro">Dinheiro</option>
+    </select>
 
-    <br><br>
+    <div id="troco-container">
+      <h4>Troco para quanto?</h4>
+      <input type="text" id="troco" placeholder="Ex: 100.00" />
+    </div>
+
+    <br>
     <button onclick="finalizarPedido()">Finalizar Pedido no WhatsApp</button>
   </div>
 
@@ -110,9 +120,21 @@
       totalSpan.textContent = total.toFixed(2);
     }
 
+    function verificarPagamento() {
+      const forma = document.getElementById("forma-pagamento").value;
+      const trocoDiv = document.getElementById("troco-container");
+
+      if (forma === "Dinheiro") {
+        trocoDiv.style.display = "block";
+      } else {
+        trocoDiv.style.display = "none";
+      }
+    }
+
     function finalizarPedido() {
       const endereco = document.getElementById("endereco").value.trim();
-      const formaPagamento = document.querySelector('input[name="pagamento"]:checked').value;
+      const formaPagamento = document.getElementById("forma-pagamento").value;
+      const troco = document.getElementById("troco").value.trim();
 
       if (!endereco) {
         alert("Por favor, informe o endereço.");
@@ -134,10 +156,13 @@
 
       mensagem += `\n*Total:* R$ ${total.toFixed(2)}\n`;
       mensagem += `📍 *Endereço:* ${endereco}\n`;
-      mensagem += `💳 *Forma de pagamento:* ${formaPagamento}`;
+      mensagem += `💳 *Forma de pagamento:* ${formaPagamento}\n`;
 
-      // Troque pelo seu número com DDI, exemplo: 55 para Brasil
-      const numero = "5584996220061"; // Exemplo: 5581999999999
+      if (formaPagamento === "Dinheiro" && troco) {
+        mensagem += `🪙 *Troco para:* R$ ${troco}`;
+      }
+
+      const numero = "5584996220061"; // Ex: 5581999999999
       const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
       window.open(url, '_blank');
     }
