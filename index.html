@@ -37,6 +37,20 @@
     #troco-container {
       display: none;
     }
+    .remover-btn {
+      background-color: red;
+      color: white;
+      padding: 5px 10px;
+      margin-left: 10px;
+      font-size: 12px;
+    }
+    .remover-btn:hover {
+      background-color: darkred;
+    }
+    .clear-cart {
+      background-color: #555;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -49,6 +63,7 @@
     <h2>Carrinho</h2>
     <ul id="cart-items"></ul>
     <p><strong>Total: R$ <span id="total">0.00</span></strong></p>
+    <button class="clear-cart" onclick="limparCarrinho()">Remover tudo do carrinho</button>
   </div>
 
   <div class="checkout">
@@ -110,14 +125,27 @@
       listaCarrinho.innerHTML = "";
       let total = 0;
 
-      carrinho.forEach(item => {
+      carrinho.forEach((item, index) => {
         const li = document.createElement("li");
-        li.textContent = `${item.quantidade}x ${item.nome} - R$ ${(item.preco * item.quantidade).toFixed(2)}`;
+        li.innerHTML = `
+          ${item.quantidade}x ${item.nome} - R$ ${(item.preco * item.quantidade).toFixed(2)}
+          <button class="remover-btn" onclick="removerDoCarrinho(${index})">Remover</button>
+        `;
         listaCarrinho.appendChild(li);
         total += item.preco * item.quantidade;
       });
 
       totalSpan.textContent = total.toFixed(2);
+    }
+
+    function removerDoCarrinho(index) {
+      carrinho.splice(index, 1);
+      atualizarCarrinho();
+    }
+
+    function limparCarrinho() {
+      carrinho.length = 0;
+      atualizarCarrinho();
     }
 
     function verificarPagamento() {
