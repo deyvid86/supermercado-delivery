@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Delivery de Supermercado</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    .product {
+      border: 1px solid #ddd;
+      padding: 15px;
+      margin-bottom: 10px;
+    }
+    .product h3 {
+      margin: 0 0 10px;
+    }
+    .cart {
+      margin-top: 20px;
+    }
+    .checkout {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Supermercado Delivery</h1>
+
+  <div id="product-list"></div>
+
+  <h2>Carrinho</h2>
+  <ul id="cart-list"></ul>
+
+  <div class="checkout">
+    <h3>Endereço de entrega</h3>
+    <input type="text" id="endereco" placeholder="Digite seu endereço completo" style="width: 100%; padding: 10px;" />
+
+    <h3>Pagamento</h3>
+    <p><strong>Pagamento na entrega</strong> (Dinheiro ou Pix)</p>
+
+    <button onclick="enviarPedido()">Finalizar pedido via WhatsApp</button>
+  </div>
+
+  <script>
+    const produtos = [
+      { nome: "Arroz 5kg", preco: 25 },
+      { nome: "Feijão 1kg", preco: 7 },
+      { nome: "Óleo de soja", preco: 6 },
+      { nome: "Açúcar 1kg", preco: 4 },
+      { nome: "Detergente", preco: 3 }
+    ];
+
+    const carrinho = [];
+
+    const listaProdutos = document.getElementById("product-list");
+    const listaCarrinho = document.getElementById("cart-list");
+
+    produtos.forEach((produto, index) => {
+      const div = document.createElement("div");
+      div.className = "product";
+      div.innerHTML = `
+        <h3>${produto.nome}</h3>
+        <p>Preço: R$ ${produto.preco.toFixed(2)}</p>
+        <input type="number" id="quantidade-${index}" min="1" value="1" style="width: 60px;" />
+        <button onclick="adicionarCarrinho(${index})">Adicionar ao carrinho</button>
+      `;
+      listaProdutos.appendChild(div);
+    });
+
+    function adicionarCarrinho(index) {
+      const quantidade = parseInt(document.getElementById(`quantidade-${index}`).value);
+      if (quantidade > 0) {
+        carrinho.push({
+          nome: produtos[index].nome,
+          preco: produtos[index].preco,
+          quantidade: quantidade
+        });
+        atualizarCarrinho();
+      }
+    }
+
+    function atualizarCarrinho() {
+      listaCarrinho.innerHTML = "";
+      carrinho.forEach(item => {
+        const li = document.createElement("li");
+        li.innerText = `${item.quantidade}x ${item.nome} - R$ ${(item.preco * item.quantidade).toFixed(2)}`;
+        listaCarrinho.appendChild(li);
+      });
+    }
+
+    function enviarPedido() {
+      const endereco = document.getElementById("endereco").value.trim();
+      if (carrinho.length === 0) {
+        alert("Adicione produtos ao carrinho!");
+        return;
+      }
+      if (!endereco) {
+        alert("Digite o endereço de entrega.");
+        return;
+      }
+
+      let mensagem = "*Pedido de Supermercado:*\n\n";
+      carrinho.forEach(item => {
+        mensagem += `🛒 ${item.quantidade}x ${item.nome} - R$ ${(item.preco * item.quantidade).toFixed(2)}\n`;
+      });
+
+      const total = carrinho.reduce((sum, item) => sum + (item.preco * item.quantidade), 0);
+      mensagem += `\n*Total: R$ ${total.toFixed(2)}*\n`;
+      mensagem += `\n📍 Endereço: ${endereco}`;
+      mensagem += `\n💰 Pagamento: na entrega (Dinheiro/Pix)`;
+
+      const telefone = "SEU_NUMERO_AQUI"; // Ex: 5581999999999
+      const url = `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`;
+      window.open(url, "_blank");
+    }
+  </script>
+
+</body>
+</html>
