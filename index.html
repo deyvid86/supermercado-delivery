@@ -98,6 +98,43 @@
 
     atualizarFiltroCategorias();
     mostrarProdutos(produtos);
-  </script>
+
+    <script>
+  // (… código atual que você já tem …)
+
+  function mostrarProdutos(lista) {
+    const container = document.getElementById('produtos');
+    container.innerHTML = ''; // limpa os produtos antigos
+
+    if (lista.length === 0) {
+      container.innerHTML = '<p>Nenhum produto encontrado.</p>';
+      return;
+    }
+
+    lista.forEach(produto => {
+      const div = document.createElement('div');
+      div.className = 'produto';
+      div.innerHTML = `
+        <img src="${produto.imagem}" alt="${produto.nome}" width="100">
+        <h3>${produto.nome}</h3>
+        <p>R$ ${produto.preco.toFixed(2)}</p>
+        <button onclick="adicionarAoCarrinho(${produto.id})">Adicionar</button>
+      `;
+      container.appendChild(div);
+    });
+  }
+
+  function mostrarTroco() {
+    const metodo = document.getElementById("pagamento").value;
+    const trocoContainer = document.getElementById("troco-container");
+    trocoContainer.style.display = metodo === "dinheiro" ? "block" : "none";
+  }
+
+  // Adicione a função adicionarAoCarrinho também se ainda não tiver:
+  function adicionarAoCarrinho(idProduto) {
+    // Aqui você pode implementar sua lógica para adicionar produtos ao carrinho
+    alert(`Produto com ID ${idProduto} adicionado ao carrinho (simulação)`);
+  }
+</script>
 </body>
 </html>
