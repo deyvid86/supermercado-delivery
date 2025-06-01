@@ -275,11 +275,25 @@
     .form-buttons button:hover {
       background: #21867a;
     }
-	@media screen and (max-width: 768px){
-		.colaborador img{
-			width: 30%;
-			}
-	}
+	/* Para telas com largura até 600px (celulares) */
+@media (max-width: 600px) {
+  .produto {
+    width: 100%; /* produto ocupa toda a largura da tela pequena */
+  }
+
+  .menu {
+    display: none; /* se quiser esconder menu grande no celular */
+  }
+
+  /* Ajustes para textos, margens, paddings */
+  body {
+    padding: 10px;
+    font-size: 16px;
+  }
+
+  /* Qualquer outro ajuste que seu layout precisar */
+}
+
   </style>
 </head>
 <body>
