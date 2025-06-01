@@ -53,27 +53,32 @@
       user-select: none;
     }
     #categorias {
-  margin-bottom: 20px;
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.categoria-btn {
-  padding: 8px 16px;
-  background-color: #eee;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.categoria-btn:hover,
-.categoria-btn.active {
-  background-color: #007bff;
-  color: white;
-}
-
+      display: flex;
+      gap: 10px;
+      background: #264653;
+      padding: 10px 20px;
+    }
+    #categorias button {
+      background: #2a9d8f;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+    #categorias button.active,
+    #categorias button:hover {
+      background: #e9c46a;
+      color: #264653;
+    }
+    main {
+      display: flex;
+      padding: 20px;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
     #produtos {
       flex: 1;
       display: grid;
@@ -330,19 +335,25 @@
   </main>
   <script>
     const produtos = [
-      { id: 1, nome: "Arroz 5kg", preco: 20.99, categoria: "Frutas", imagem: "https://cdn-icons-png.flaticon.com/512/2913/2913461.png" },
-      { id: 2, nome: "Feijão Carioca 1kg", preco: 7.50, categoria: "Bebidas", imagem: "https://cdn-icons-png.flaticon.com/512/4339/4339002.png" },
+      { id: 1, nome: "Arroz 5kg", preco: 20.99, categoria: "Grãos", imagem: "https://cdn-icons-png.flaticon.com/512/2913/2913461.png" },
+      { id: 2, nome: "Feijão Carioca 1kg", preco: 7.50, categoria: "Grãos", imagem: "https://cdn-icons-png.flaticon.com/512/4339/4339002.png" },
       { id: 3, nome: "Leite Integral 1L", preco: 4.89, categoria: "Laticínios", imagem: "https://cdn-icons-png.flaticon.com/512/616/616408.png" },
-      { id: 4, nome: "Pão Francês (unidade)", preco: 0.80, categoria: "lanches", imagem: "https://cdn-icons-png.flaticon.com/512/2746/2746564.png" },
-      
+      { id: 4, nome: "Pão Francês (unidade)", preco: 0.80, categoria: "Padaria", imagem: "https://cdn-icons-png.flaticon.com/512/2746/2746564.png" },
+      { id: 5, nome: "Banana Nanica (kg)", preco: 5.50, categoria: "Frutas", imagem: "https://cdn-icons-png.flaticon.com/512/415/415733.png" },
+      { id: 6, nome: "Tomate (kg)", preco: 6.00, categoria: "Legumes", imagem: "https://cdn-icons-png.flaticon.com/512/2913/2913713.png" },
+      { id: 7, nome: "Detergente Líquido 500ml", preco: 3.99, categoria: "Limpeza", imagem: "https://cdn-icons-png.flaticon.com/512/1246/1246489.png" },
+      { id: 8, nome: "Sabonete 90g", preco: 1.50, categoria: "Higiene", imagem: "https://cdn-icons-png.flaticon.com/512/2913/2913706.png" },
+      { id: 9, nome: "Café Torrado 500g", preco: 15.00, categoria: "Bebidas", imagem: "https://cdn-icons-png.flaticon.com/512/2731/2731535.png" },
+      { id: 1, nome: "Arroz 5kg", preco: 20.99, categoria: "Grãos", imagem: "https://cdn-icons-png.flaticon.com/512/2913/2913461.png" },
+      { id: 2, nome: "Feijão Carioca 1kg", preco: 7.50, categoria: "Grãos", imagem: "https://cdn-icons-png.flaticon.com/512/4339/4339002.png" },
+      { id: 3, nome: "Leite Integral 1L", preco: 4.89, categoria: "Laticínios", imagem: "https://cdn-icons-png.flaticon.com/512/616/616408.png" },
+      { id: 4, nome: "Pão Francês (unidade)", preco: 0.80, categoria: "Padaria", imagem: "https://cdn-icons-png.flaticon.com/512/2746/2746564.png" },
+      { id: 5, nome: "Banana Nanica (kg)", preco: 5.50, categoria: "Frutas", imagem: "https://cdn-icons-png.flaticon.com/512/415/415733.png" },
+      { id: 6, nome: "Tomate (kg)", preco: 6.00, categoria: "Legumes", imagem: "https://cdn-icons-png.flaticon.com/512/2913/2913713.png" },
+      { id: 7, nome: "Detergente Líquido 500ml", preco: 3.99, categoria: "Limpeza", imagem: "https://cdn-icons-png.flaticon.com/512/1246/1246489.png" },
+      { id: 8, nome: "Sabonete 90g", preco: 1.50, categoria: "Higiene", imagem: "https://cdn-icons-png.flaticon.com/512/2913/2913706.png" },
+      { id: 9, nome: "Café Torrado 500g", preco: 15.00, categoria: "Bebidas", imagem: "https://cdn-icons-png.flaticon.com/512/2731/2731535.png" }
 	];
-	  <div id="categorias">
-  <button class="categoria-btn active" data-categoria="todos">Todos</button>
-  <button class="categoria-btn" data-categoria="bebidas">Bebidas</button>
-  <button class="categoria-btn" data-categoria="frutas">Frutas</button>
-  <button class="categoria-btn" data-categoria="lanches">Lanches</button>
-</div>
-
 	  
     let carrinho = {};
 
@@ -539,29 +550,6 @@
       }
     }
 
-
-	  const botoesCategoria = document.querySelectorAll('.categoria-btn');
-const produtos = document.querySelectorAll('.produto');
-
-botoesCategoria.forEach(botao => {
-  botao.addEventListener('click', () => {
-    // Remove a classe active de todos os botões
-    botoesCategoria.forEach(btn => btn.classList.remove('active'));
-    // Adiciona active no botão clicado
-    botao.classList.add('active');
-
-    const categoriaSelecionada = botao.getAttribute('data-categoria');
-
-    produtos.forEach(produto => {
-      if (categoriaSelecionada === 'todos' || produto.getAttribute('data-categoria') === categoriaSelecionada) {
-        produto.style.display = 'block'; // mostra produto
-      } else {
-        produto.style.display = 'none'; // esconde produto
-      }
-    });
-  });
-});
-
     // Enviar pedido pelo WhatsApp
     function enviarWhatsApp() {
       const nome = document.getElementById('nome').value.trim();
@@ -601,4 +589,5 @@ botoesCategoria.forEach(botao => {
   </script>
 </body>
 </html>
+
 
