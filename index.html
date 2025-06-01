@@ -154,9 +154,9 @@
       z-index: 200;
     }
     #carrinho-container h2 {
-      margin-top: 1;
+      margin-top: 0;
       font-size: 1.5rem;
-      border-bottom: 0px solid #ccc;
+      border-bottom: 1px solid #ccc;
       padding-bottom: 10px;
       margin-bottom: 15px;
       position: relative;
@@ -275,7 +275,11 @@
     .form-buttons button:hover {
       background: #21867a;
     }
-
+	@media screen and (max-width: 768px){
+		.colaborador img{
+			width: 30%;
+			}
+	}
   </style>
 </head>
 <body>
@@ -347,9 +351,7 @@
     const pagamentoSelect = document.getElementById('pagamento');
     const trocoContainer = document.getElementById('troco-container');
 
-  const categoriasContainer = document.getElementById('categorias');
-
-//  Exibir categorias únicas
+    // Exibir categorias únicas
     function mostrarCategorias() {
       const categorias = [...new Set(produtos.map(p => p.categoria))];
       categoriasContainer.innerHTML = '';
@@ -374,7 +376,7 @@
       btnAtivo.classList.add('active');
       mostrarProdutos(categoria === 'Todas' ? produtos : produtos.filter(p => p.categoria === categoria));
     }
-    
+
     // Mostrar produtos na tela
     function mostrarProdutos(listaProdutos) {
       produtosContainer.innerHTML = '';
@@ -538,7 +540,7 @@
 
       let mensagem = `*Pedido de Supermercado*\n\n*Nome:* ${nome}\n*📍Endereço:* ${endereco}\n*💳Pagamento:* ${pagamento}`;
       if (pagamento === 'dinheiro' && troco) {
-        mensagem += `\n*🪙Troco para:* R$ ${parseFloat(troco).toFixed(2)}`;
+        mensagem += `\n*Troco para:* R$ ${parseFloat(troco).toFixed(2)}`;
       }
       mensagem += `\n\n*🛒Produtos:*`;
       Object.entries(carrinho).forEach(([id, qtd]) => {
