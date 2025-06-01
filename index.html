@@ -286,8 +286,7 @@
       🛒 <span id="badge-carrinho">0</span>
     </button>
   </header>
-  <select id="categorias" multiple size="5" aria-label="Filtrar por categorias"></select>
-  
+  <nav id="categorias"></nav>
   <main>
     <section id="produtos"></section>
     <aside id="carrinho-container" tabindex="0" aria-label="Carrinho de compras">
@@ -350,33 +349,32 @@
 
   const categoriasContainer = document.getElementById('categorias');
 
-// Exibir categorias únicas como <option> múltiplas
-function mostrarCategorias() {
-  const categoriasUnicas = [...new Set(produtos.map(p => p.categoria))];
-  categoriasContainer.innerHTML = '';
+//  Exibir categorias únicas
+    function mostrarCategorias() {
+      const categorias = [...new Set(produtos.map(p => p.categoria))];
+      categoriasContainer.innerHTML = '';
+      const btnTodas = document.createElement('button');
+      btnTodas.textContent = "Todas";
+      btnTodas.classList.add('active');
+      btnTodas.addEventListener('click', () => {
+        filtrarCategoria('Todas', btnTodas);
+      });
+      categoriasContainer.appendChild(btnTodas);
+      categorias.forEach(categoria => {
+        const btn = document.createElement('button');
+        btn.textContent = categoria;
+        btn.addEventListener('click', () => filtrarCategoria(categoria, btn));
+        categoriasContainer.appendChild(btn);
+      });
+    }
 
-  categoriasUnicas.forEach(categoria => {
-    const option = document.createElement('option');
-    option.value = categoria;
-    option.textContent = categoria;
-    categoriasContainer.appendChild(option);
-  });
+    // Filtrar produtos por categoria
+    function filtrarCategoria(categoria, btnAtivo) {
+      Array.from(categoriasContainer.children).forEach(btn => btn.classList.remove('active'));
+      btnAtivo.classList.add('active');
+      mostrarProdutos(categoria === 'Todas' ? produtos : produtos.filter(p => p.categoria === categoria));
+    }
 
-  categoriasContainer.addEventListener('change', () => {
-    const selecionadas = Array.from(categoriasContainer.selectedOptions).map(opt => opt.value);
-    filtrarCategoriaMultipla(selecionadas);
-  });
-}
-
-// Filtrar produtos por múltiplas categorias
-function filtrarCategoriaMultipla(categoriasSelecionadas) {
-  if (categoriasSelecionadas.length === 0) {
-    mostrarProdutos(produtos); // Nenhuma categoria selecionada, mostra tudo
-  } else {
-    const filtrados = produtos.filter(p => categoriasSelecionadas.includes(p.categoria));
-    mostrarProdutos(filtrados);
-  }
-}
 
     // Mostrar produtos na tela
     function mostrarProdutos(listaProdutos) {
