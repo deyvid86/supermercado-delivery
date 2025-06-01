@@ -374,8 +374,7 @@
       btnAtivo.classList.add('active');
       mostrarProdutos(categoria === 'Todas' ? produtos : produtos.filter(p => p.categoria === categoria));
     }
-
-
+    
     // Mostrar produtos na tela
     function mostrarProdutos(listaProdutos) {
       produtosContainer.innerHTML = '';
