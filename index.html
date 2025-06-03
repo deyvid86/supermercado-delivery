@@ -387,27 +387,15 @@
     </aside>
   </main>
   <script>
-    
-      const produtos = [
-  {
-    id: 1,
-    nome: "Arroz 1kg",
-    preco: 7.50,
-    categoria: "Mercearia",
-    imagem: "arroz.jpg",
-    tipo: "unidade" // produto por unidade (normal)
-  },
-  {
-    id: 2,
-    nome: "Carne Moída",
-    preco: 39.90, // preço por kg
-    categoria: "Açougue",
-    imagem: "carne.jpg",
-    tipo: "peso" // produto por peso
-  }
-];
-
-
+    const produtos = [
+      { id: 1, nome: "Salgado pippo's sabor bacon 75g", preco: 3.99, categoria: "Alimentos", imagem: "https://phygital-files.mercafacil.com/catalogo/uploads/produto/salgadinho_de_milho_bacon_pippo_s_vitaminado_pacote_75g_53465113-c6e4-4c19-bc4d-f0ce008785ae.png" },
+      { id: 2, nome: "Feijão Carioca urimataú 1kg", preco: 7.50, categoria: "Alimentos", imagem: "https://phygital-files.mercafacil.com/rosadosventos/uploads/produto/fava_curimatau_1kg_branca_e1a14ce0-2db7-4f24-8697-38c3b3335f3c.png" },
+      { id: 3, nome: "Coca cola 2L", preco: 10.49, categoria: "bebidas", imagem: "https://img.cdndsgni.com/preview/10001707.jpg" },
+      { id: 4, nome: "Fanta Uva 2L", preco: 8.49, categoria: "bebidas", imagem: "https://img.cdndsgni.com/preview/10001788.jpg" },
+      { id: 5, nome: "Tomate (KG)", preco: 7.50, categoria: "hortifruti", imagem: "https://acdn-us.mitiendanube.com/stores/002/296/660/products/tomate-png-1280x7201-36283e6b10aef947e616606979966621-1024-1024.png" },
+      { id: 6, nome: "Laranja Pera (KG)", preco: 7.50, categoria: "hortifruti", imagem: "https://img.freepik.com/psd-gratuitas/fatias-suculentas-de-laranja-frutas-citricas-frescas-folhas-verdes_84443-37185.jpg?semt=ais_items_boosted&w=740" },
+      { id: 7, nome: "Coxão mole de sol (KG)", preco: 7.50, categoria: "hortifruti", imagem: "https://savegnagoio.vtexassets.com/arquivos/ids/363361-800-450?v=638080736389870000&width=800&height=450&aspect=true" },
+      { id: 8, nome: "Bisteca de suína (KG)", preco: 7.50, categoria: "hortifruti", imagem: "https://img.cdndsgni.com/preview/11499788-m.jpg" },
 	];
 	  
     let carrinho = {};
@@ -470,12 +458,7 @@
           <img src="${produto.imagem}" alt="${produto.nome}" />
           <h3>${produto.nome}</h3>
           <p>R$ ${produto.preco.toFixed(2)}</p>
-          <input type="number"
-       min="${produto.tipo === 'peso' ? '0.1' : '1'}"
-       step="${produto.tipo === 'peso' ? '0.1' : '1'}"
-       value="1"
-       aria-label="Quantidade de ${produto.nome} (${produto.tipo === 'peso' ? 'kg' : 'unid'})" />
-
+          <input type="number" min="1" value="1" aria-label="Quantidade de ${produto.nome}" />
           <button aria-label="Adicionar ${produto.nome} ao carrinho">Adicionar</button>
         `;
         const inputQtd = card.querySelector('input');
@@ -495,62 +478,54 @@
 
     // Adicionar produto ao carrinho
     function adicionarAoCarrinho(id, quantidade) {
-  const produto = produtos.find(p => p.id === id);
-  if (!produto) return;
-
-  if (carrinho[id]) {
-    carrinho[id].quantidade += quantidade;
-  } else {
-    carrinho[id] = {
-      ...produto,
-      quantidade: quantidade
-    };
-  }
-
-  atualizarCarrinho();
-}
+      if (carrinho[id]) {
+        carrinho[id] += quantidade;
+      } else {
+        carrinho[id] = quantidade;
+      }
+      atualizarCarrinho();
+       // abrirCarrinho(); // Agora o carrinho só abre quando o botão é clicado
+    }
 
     // Atualizar exibição do carrinho
     function atualizarCarrinho() {
-  itensCarrinhoContainer.innerHTML = '';
-  const ids = Object.keys(carrinho);
-  if (ids.length === 0) {
-    itensCarrinhoContainer.textContent = "Seu carrinho está vazio.";
-    totalCarrinho.textContent = "Total: R$ 0.00";
-    badgeCarrinho.style.display = 'none';
-    formPedido.style.display = 'none';
-    return;
-  }
-  let total = 0;
-  let totalItens = 0;
-  ids.forEach(id => {
-    const produto = produtos.find(p => p.id == id);
-    const qtd = carrinho[id];
-    totalItens += qtd;
-    const subtotal = produto.preco * qtd;
-    total += subtotal;
+      itensCarrinhoContainer.innerHTML = '';
+      const ids = Object.keys(carrinho);
+      if (ids.length === 0) {
+        itensCarrinhoContainer.textContent = "Seu carrinho está vazio.";
+        totalCarrinho.textContent = "Total: R$ 0.00";
+        badgeCarrinho.style.display = 'none';
+        formPedido.style.display = 'none';
+        return;
+      }
+      let total = 0;
+      let totalItens = 0;
+      ids.forEach(id => {
+        const produto = produtos.find(p => p.id == id);
+        const qtd = carrinho[id];
+        totalItens += qtd;
+        const subtotal = produto.preco * qtd;
+        total += subtotal;
 
-    const unidade = produto.tipo === 'peso' ? 'kg' : 'un';
-
-    const divItem = document.createElement('div');
-    divItem.className = 'item-carrinho';
-    divItem.innerHTML = `
-      <div><strong>${produto.nome}</strong></div>
-      <div class="item-quantidade" aria-label="Quantidade do produto ${produto.nome}">
-        <button aria-label="Diminuir quantidade" data-id="${id}" class="diminuir">−</button>
-        <span>${qtd} ${unidade}</span>
-        <button aria-label="Aumentar quantidade" data-id="${id}" class="aumentar">+</button>
-      </div>
-      <div>R$ ${subtotal.toFixed(2)}</div>
-      <button aria-label="Remover ${produto.nome} do carrinho" data-id="${id}" class="item-remover">×</button>
-    `;
-    itensCarrinhoContainer.appendChild(divItem);
-  });
-  totalCarrinho.textContent = `Total: R$ ${total.toFixed(2)}`;
-  badgeCarrinho.textContent = totalItens;
-  badgeCarrinho.style.display = 'inline-block';
-  formPedido.style.display = 'flex';
-}
+        const divItem = document.createElement('div');
+        divItem.className = 'item-carrinho';
+        divItem.innerHTML = `
+          <div><strong>${produto.nome}</strong></div>
+          <div class="item-quantidade" aria-label="Quantidade do produto ${produto.nome}">
+            <button aria-label="Diminuir quantidade" data-id="${id}" class="diminuir">−</button>
+            <span>${qtd}</span>
+            <button aria-label="Aumentar quantidade" data-id="${id}" class="aumentar">+</button>
+          </div>
+          <div>R$ ${subtotal.toFixed(2)}</div>
+          <button aria-label="Remover ${produto.nome} do carrinho" data-id="${id}" class="item-remover">×</button>
+        `;
+        itensCarrinhoContainer.appendChild(divItem);
+      });
+      totalCarrinho.textContent = `Total: R$ ${total.toFixed(2)}`;
+      badgeCarrinho.textContent = totalItens;
+      badgeCarrinho.style.display = 'inline-block';
+      formPedido.style.display = 'flex';
+    }
 
     // Abrir carrinho
     function abrirCarrinho() {
